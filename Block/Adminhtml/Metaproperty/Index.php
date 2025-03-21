@@ -109,8 +109,8 @@ class Index extends \Magento\Backend\Block\Template
             }
 
             $response_data['sku_selected'] = $properties_details["sku"]["bynder_property_slug"];
-            $response_data['image_role_selected']= '0';//$properties_details["image_role"]["bynder_property_slug"];
-            $response_data['image_alt_text']= '0';//$properties_details["alt_text"]["bynder_property_slug"];
+            $response_data['image_role_selected']= $properties_details["image_role"]["bynder_property_slug"];
+            $response_data['image_alt_text']= $properties_details["alt_text"]["bynder_property_slug"];
         } else {
             $response_data['sku_selected'] = '0';
             $response_data['image_role_selected'] = '0';

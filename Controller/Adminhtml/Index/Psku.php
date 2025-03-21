@@ -405,6 +405,7 @@ class Psku extends \Magento\Backend\App\Action
                             }
                         }
                     } else {
+                        $new_image_role = ['Base', 'Small', 'Thumbnail', 'Swatch'];
                         $new_magento_role_list[] = "###"."\n";
                         /* this part added because sometime role not avaiable but alt text will be there*/
                         $alt_text_vl = $data_value["thumbnails"]["img_alt_text"];
@@ -416,7 +417,7 @@ class Psku extends \Magento\Backend\App\Action
                         $new_bynder_mediaid_text[] = $bynder_media_id."\n";
                     }
                     if ($data_value['type'] == "image") {
-                        $image_link = isset($data_value['derivatives'][0]['public_url']) ? $data_value['derivatives'][0]['public_url'] : $data_value['original'];
+                        $image_link = isset($data_value['derivatives'][0]['public_url']) ? $data_value['derivatives'][0]['public_url'] : $data_value['transformBaseUrl'];
                         array_push($data_arr, $data_sku[0]);
                         $data_p = [
                             "sku" => $data_sku[0],
@@ -429,7 +430,7 @@ class Psku extends \Magento\Backend\App\Action
                     } else {
                         if ($data_value['type'] == 'video') {
                             /*$video_link = $image_data["image_link"] . '@@' . $image_data["webimage"];*/
-                            $video_link = $data_value["original"] . '@@' . $image_data["webimage"];
+                            $video_link = $data_value["transformBaseUrl"] . '@@' . $image_data["webimage"];
                             array_push($data_arr, $data_sku[0]);
                             $data_p = [
                                 "sku" => $data_sku[0],
@@ -444,7 +445,7 @@ class Psku extends \Magento\Backend\App\Action
                         } else {
                             $doc_name = $data_value["name"];
                             $doc_name_with_space = preg_replace("/[^a-zA-Z]+/", "-", $doc_name);
-                            $doc_link = $data_value["original"] . '@@' . $doc_name_with_space. "\n";
+                            $doc_link = $data_value["transformBaseUrl"] . '@@' . $doc_name_with_space. "\n";
                             array_push($data_arr, $data_sku[0]);
                             $data_p = [
 								"sku" => $data_sku[0],
@@ -499,6 +500,7 @@ class Psku extends \Magento\Backend\App\Action
                             }
                         }
                     } else {
+                        $new_image_role = ['Base', 'Small', 'Thumbnail', 'Swatch'];
                         $new_magento_role_list[] = "###"."\n";
                         /* this part added because sometime role not avaiable but alt text will be there*/
                         $alt_text_vl = $data_value["thumbnails"]["img_alt_text"];
@@ -510,7 +512,7 @@ class Psku extends \Magento\Backend\App\Action
                         $new_bynder_mediaid_text[] = $bynder_media_id."\n";
                     }
                     if ($data_value['type'] == "image") {
-                        $image_link = $data_value['derivatives'][0]['public_url'];
+                        $image_link = isset($data_value['derivatives'][0]['public_url']) ? $data_value['derivatives'][0]['public_url'] : $data_value['transformBaseUrl'];
                         array_push($data_arr, $data_sku[0]);
                         $data_p = [
                             "sku" => $data_sku[0],
@@ -523,7 +525,7 @@ class Psku extends \Magento\Backend\App\Action
                     } else {
                         if ($data_value['type'] == 'video') {
                             /*$video_link = $image_data["image_link"] . '@@' . $image_data["webimage"];*/
-                            $video_link = $data_value["original"] . '@@' . $image_data["webimage"];
+                            $video_link = $data_value["transformBaseUrl"] . '@@' . $image_data["webimage"];
                             array_push($data_arr, $data_sku[0]);
                             $data_p = [
                                 "sku" => $data_sku[0],
@@ -538,7 +540,7 @@ class Psku extends \Magento\Backend\App\Action
                         } else {
                             $doc_name = $data_value["name"];
                             $doc_name_with_space = preg_replace("/[^a-zA-Z]+/", "-", $doc_name);
-                            $doc_link = $data_value["original"] . '@@' . $doc_name_with_space. "\n";
+                            $doc_link = $data_value["transformBaseUrl"] . '@@' . $doc_name_with_space. "\n";
                             array_push($doc_data_arr, $data_sku[0]);
                             $data_p = [
 								"sku" => $data_sku[0],
