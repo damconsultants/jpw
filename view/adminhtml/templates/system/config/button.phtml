@@ -37,16 +37,20 @@
                     }
                 }]
             };
-            var ajaxUrl = '<?=
-                            /** @noEscape */
-                            $block->getData('mp_active_url') ?>';
-            var fieldKey = $('#bynderconfig_bynder_credential_licenses_key');
-            var popup = modal(options, $('#popup-mpdal'));
-            window.mageplazaModuleActive = function() {
+            var ajaxUrl = '<?= $block->escapeUrl($block->getAjaxUrl()); ?>';
+			var fieldKey = $('#bynderconfig_bynder_credential_licenses_key');
+			var popup = modal(options, $('#popup-mpdal'));
+            $('#bt_id').click(function() {
+				console.log("Hello");
+				var formKey = FORM_KEY;
                 jQuery.ajax({
                     url: ajaxUrl,
                     /* dataType: 'json',*/
                     showLoader: true,
+					type: 'POST',
+					data: {
+						form_key: formKey // Include the form key
+					},
                     success: function(result) {
                         var response = JSON.parse(result);
                         if (response.status == 1) {
@@ -57,7 +61,7 @@
                     }
                 });
 
-            };
+            });
 
         }
     );

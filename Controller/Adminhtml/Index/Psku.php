@@ -362,6 +362,7 @@ class Psku extends \Magento\Backend\App\Action
 		$doc_data_arr = [];
         $result = $this->resultJsonFactory->create();
         if ($convert_array['status'] == 1) {
+			//echo "<pre>"; print_r($convert_array); exit;
             foreach ($convert_array['data'] as $k => $data_value) {
                 if ($select_attribute == $data_value['type']) {
                     $bynder_media_id = $data_value['id'];
@@ -378,7 +379,7 @@ class Psku extends \Magento\Backend\App\Action
                     $new_image_role = [];
                     if (count($bynder_image_role) > 0) {
                         foreach ($bynder_image_role as $m_bynder_role) {
-                            if ($m_bynder_role == 0) {
+                            if (!empty($m_bynder_role)) {
                                 $new_image_role = ['Base', 'Small', 'Thumbnail', 'Swatch'];
                             
                                 $alt_text_vl = $data_value["thumbnails"]["img_alt_text"];
@@ -416,8 +417,9 @@ class Psku extends \Magento\Backend\App\Action
                         }
                         $new_bynder_mediaid_text[] = $bynder_media_id."\n";
                     }
+					$new_bynder_mediaid_text = array_unique($new_bynder_mediaid_text);
                     if ($data_value['type'] == "image") {
-                        $image_link = isset($data_value['derivatives'][0]['public_url']) ? $data_value['derivatives'][0]['public_url'] : $data_value['transformBaseUrl'];
+                        $image_link = isset($data_value['derivatives'][0]['public_url']) ? $data_value['derivatives'][0]['public_url'] : $image_data['webimage'];
                         array_push($data_arr, $data_sku[0]);
                         $data_p = [
                             "sku" => $data_sku[0],
@@ -430,7 +432,7 @@ class Psku extends \Magento\Backend\App\Action
                     } else {
                         if ($data_value['type'] == 'video') {
                             /*$video_link = $image_data["image_link"] . '@@' . $image_data["webimage"];*/
-                            $video_link = $data_value["transformBaseUrl"] . '@@' . $image_data["webimage"];
+                            $video_link = $data_value["videoPreviewURLs"][0] . '@@' . $image_data["webimage"];
                             array_push($data_arr, $data_sku[0]);
                             $data_p = [
                                 "sku" => $data_sku[0],
@@ -445,7 +447,7 @@ class Psku extends \Magento\Backend\App\Action
                         } else {
                             $doc_name = $data_value["name"];
                             $doc_name_with_space = preg_replace("/[^a-zA-Z]+/", "-", $doc_name);
-                            $doc_link = $data_value["transformBaseUrl"] . '@@' . $doc_name_with_space. "\n";
+                            $doc_link = $image_data["image_link"] . '@@' . $doc_name_with_space. "\n";
                             array_push($data_arr, $data_sku[0]);
                             $data_p = [
 								"sku" => $data_sku[0],
@@ -473,7 +475,7 @@ class Psku extends \Magento\Backend\App\Action
                     $new_image_role = [];
                     if (count($bynder_image_role) > 0) {
                         foreach ($bynder_image_role as $m_bynder_role) {
-                            if ($m_bynder_role == 0) {
+                            if (!empty($m_bynder_role)) {
                                 $new_image_role = ['Base', 'Small', 'Thumbnail', 'Swatch'];
                             
                                 $alt_text_vl = $data_value["thumbnails"]["img_alt_text"];
@@ -511,8 +513,9 @@ class Psku extends \Magento\Backend\App\Action
                         }
                         $new_bynder_mediaid_text[] = $bynder_media_id."\n";
                     }
+					$new_bynder_mediaid_text = array_unique($new_bynder_mediaid_text);
                     if ($data_value['type'] == "image") {
-                        $image_link = isset($data_value['derivatives'][0]['public_url']) ? $data_value['derivatives'][0]['public_url'] : $data_value['transformBaseUrl'];
+                        $image_link = isset($data_value['derivatives'][0]['public_url']) ? $data_value['derivatives'][0]['public_url'] : $image_data['webimage'];
                         array_push($data_arr, $data_sku[0]);
                         $data_p = [
                             "sku" => $data_sku[0],
@@ -525,7 +528,7 @@ class Psku extends \Magento\Backend\App\Action
                     } else {
                         if ($data_value['type'] == 'video') {
                             /*$video_link = $image_data["image_link"] . '@@' . $image_data["webimage"];*/
-                            $video_link = $data_value["transformBaseUrl"] . '@@' . $image_data["webimage"];
+                            $video_link = $data_value["videoPreviewURLs"][0] . '@@' . $image_data["webimage"];
                             array_push($data_arr, $data_sku[0]);
                             $data_p = [
                                 "sku" => $data_sku[0],
@@ -540,7 +543,7 @@ class Psku extends \Magento\Backend\App\Action
                         } else {
                             $doc_name = $data_value["name"];
                             $doc_name_with_space = preg_replace("/[^a-zA-Z]+/", "-", $doc_name);
-                            $doc_link = $data_value["transformBaseUrl"] . '@@' . $doc_name_with_space. "\n";
+                            $doc_link = $image_data["image_link"] . '@@' . $doc_name_with_space. "\n";
                             array_push($doc_data_arr, $data_sku[0]);
                             $data_p = [
 								"sku" => $data_sku[0],
@@ -791,6 +794,20 @@ class Psku extends \Magento\Backend\App\Action
                                     "bynder_md_id" => $bynder_media_id[$vv],
                                     "is_import" => 0
                                 ];
+                                $total_new_values = count($image_detail);
+                                if ($total_new_values > 1) {
+                                    foreach ($image_detail as $nn => $n_img) {
+                                        if ($n_img['item_type'] == "IMAGE" && $nn != ($total_new_values - 1)) {
+                                            if ($new_magento_role_option_array[$vv] != "###") {
+                                                $new_mg_role_array = (array)$new_magento_role_option_array[$vv];
+                                                if (count($n_img["image_role"])>0 && count($new_mg_role_array)>0) {
+                                                    $result_val=array_diff($n_img["image_role"], $new_mg_role_array);
+                                                    $image_detail[$nn]["image_role"] = $result_val;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                                 if (!in_array($item_url[0], $all_item_url)) {
                                     $diff_image_detail[] = [
                                         "item_url" => $new_image_value,
@@ -893,7 +910,7 @@ class Psku extends \Magento\Backend\App\Action
                         }
                     }
                     $array_merge = array_merge($new_image_detail, $diff_image_detail);
-                    $final_array_merge = array_merge($array_merge, $old_video_detail);
+                    $final_array_merge = array_merge($image_detail, $old_video_detail);
                     $type = [];
                     $image = [];
                     $media_id = [];

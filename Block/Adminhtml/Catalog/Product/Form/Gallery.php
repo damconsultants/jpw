@@ -126,4 +126,22 @@ class Gallery extends \Magento\Backend\Block\Template
     {
         return json_encode($attr);
     }
+	/**
+     * Return ajax url for custom button
+     *
+     * @return string
+     */
+    public function getAjaxUrl()
+    {
+        return $this->getUrl('bynder/index/adddatas');
+    }
+	/**
+     * Return ajax url for custom button
+     *
+     * @return string
+     */
+    public function getAjaxImportUrl()
+    {
+        return $this->getUrl('bynder/index/importimages');
+    }
 }

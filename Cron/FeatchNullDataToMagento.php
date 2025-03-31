@@ -366,6 +366,7 @@ class FeatchNullDataToMagento
         $data_arr = [];
         $data_val_arr = [];
         if ($convert_array['status'] == 1) {
+			
             foreach ($convert_array['data'] as $data_value) {
                 $bynder_media_id = $data_value['id'];
                 $image_data = $data_value['thumbnails'];
@@ -381,7 +382,7 @@ class FeatchNullDataToMagento
                 $new_image_role = [];
                 if (count($bynder_image_role) > 0) {
                     foreach ($bynder_image_role as $m_bynder_role) {
-                        if ($m_bynder_role == 0) {
+                        if (!empty($m_bynder_role)) {
                             $new_image_role = ['Base', 'Small', 'Thumbnail', 'Swatch'];
                             $alt_text_vl = $data_value["thumbnails"]["img_alt_text"];
                             if (is_array($data_value["thumbnails"]["img_alt_text"])) {
@@ -406,6 +407,7 @@ class FeatchNullDataToMagento
                         }
                     }
                 } else {
+					$new_image_role = ['Base', 'Small', 'Thumbnail', 'Swatch'];
                     $new_magento_role_list[] = "###"."\n";
                     /* this part added because sometime role not avaiable but alt text will be there*/
                     $alt_text_vl = $data_value["thumbnails"]["img_alt_text"];
@@ -416,8 +418,9 @@ class FeatchNullDataToMagento
                     }
                     $new_bynder_mediaid_text[] = $bynder_media_id."\n";
                 }
+				$new_bynder_mediaid_text = array_unique($new_bynder_mediaid_text);
                 if ($data_value['type'] == "image") {
-                    $image_link = isset($data_value['derivatives'][0]['public_url']) ? $data_value['derivatives'][0]['public_url'] : $data_value['original'];
+                    $image_link = isset($data_value['derivatives'][0]['public_url']) ? $data_value['derivatives'][0]['public_url'] : $image_data['webimage'];
                     array_push($data_arr, $data_sku[0]);
                     $data_p = [
                         "sku" => $data_sku[0],
@@ -430,7 +433,7 @@ class FeatchNullDataToMagento
                     array_push($data_val_arr, $data_p);
                 } else {
                     if ($data_value['type'] == 'video') {
-                        $video_link = $data_value["original"] . '@@' . $image_data["webimage"];
+                        $video_link = $data_value["videoPreviewURLs"][0] . '@@' . $image_data["webimage"];
                         array_push($data_arr, $data_sku[0]);
                         $data_p = [
                             "sku" => $data_sku[0],
@@ -445,7 +448,7 @@ class FeatchNullDataToMagento
                     } else {
                         $doc_name = $data_value["name"];
                         $doc_name_with_space = preg_replace("/[^a-zA-Z]+/", "-", $doc_name);
-                        $doc_link = $data_value["original"] . '@@' . $doc_name_with_space;
+                        $doc_link = $image_data["image_link"] . '@@' . $doc_name_with_space;
                         array_push($data_arr, $data_sku[0]);
                         $data_p = [
                             "sku" => $data_sku[0],

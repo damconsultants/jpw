@@ -5,7 +5,7 @@ $default_sku_value = $block_get_data['sku_selected'];
 $default_image_role_value = $block_get_data['image_role_selected'];
 $default_image_alt_text = $block_get_data['image_alt_text'];
 $url = $block->getMainUrl();
-$syncMetaUrl = $url."bynder/index/synmetaproperty";
+$syncMetaUrl = $block->escapeUrl($block->getSynmetaProperty());
 
 $sku_properites = "";
 $image_role_properites = "";
@@ -100,10 +100,14 @@ if (count($get_metaData) > 0) {
     require(["jquery"],function($) {
         $(document).ready(function() {
             $('.syncMetaProperties').click(function () {
+				var formKey = FORM_KEY;
                 var customurl = '<?= $block->escapeHtml($syncMetaUrl); ?>';
                     $.ajax({
                         url: customurl,
                         type: 'POST',
+						data: {
+							form_key: formKey // Include the form key
+						},
                         showLoader: true,
                         async: true,
                         //dataType: 'json',

@@ -70,7 +70,7 @@ class Data extends AbstractHelper
     public const FETCH_PRODUCT_SKU_LIMIT = 'cronimageconfig/configurable_cron/fetch_product_sku_limt';
     public const AUTO_PRODUCT_SKU_LIMIT = 'cronimageconfig/auto_add_bynder/auto_product_sku_limt';
     public const PRODUCT_SKU_LIMIT = 'cronimageconfig/set_limit_product_sku/product_sku_limt';
-    public const API_CALLED = 'https://developer.thedamconsultants.biz/';
+    public const API_CALLED = 'https://developer.thedamconsultants.com/';
     public const IFRAME_URL = 'https://trello.thedamconsultants.com/bynder-registration';
 
     /**
@@ -583,7 +583,7 @@ class Data extends AbstractHelper
             'permanent_token' => $this->getPermanenToken(),
             'licence_token' => $this->getLicenceToken()
         ];
-        
+        //echo "<pre>"; print_r($fields); exit;
         $jsonData = '{}';
         $fields = json_encode($fields);
         $this->_curl->setOption(CURLOPT_URL, self::API_CALLED . 'jpw-get-bynder-meta-properites');

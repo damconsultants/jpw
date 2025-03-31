@@ -153,8 +153,8 @@ $get_base_url = $block->getBaseUrl();
     var past_bynder_image_videos=[];
     var past_item_array = [];
     var past_item_role_array = [];
-    var import_image_url = '<?= $block->escapeUrl($get_base_url."bynder/product/importimage") ?>';
-    var add_temp_data = '<?= $block->escapeUrl($get_base_url."bynder/product/adddata") ?>';
+    var import_image_url = '<?= $block->escapeUrl($block->getAjaxImportUrl()) ?>';
+    var add_temp_data = '<?= $block->escapeUrl($block->getAjaxUrl()) ?>';
     var configuration_domain = '<?= $block->escapeHtml($configuration_domain); ?>';
     var cur_product_id = '<?= $block->escapeHtml($product_id); ?>';
     var cur_sku = "<?= $block->escapeHtml($sku); ?>";
@@ -298,7 +298,7 @@ $get_base_url = $block->getBaseUrl();
 
             content += '<td>';
             if(select_item_type == "IMAGE") {
-            content += '<select name="image_rol"  size="5" class="image_role_'+i+'" multiple>';
+            content += '<select name="image_rol"  size="5" class="image_role_'+i+'" multiple disabled>';
             
             jQuery.each(attr, function( k, attr_val ){
                 var selected = "";
@@ -709,7 +709,7 @@ $get_base_url = $block->getBaseUrl();
 
                     content += '<td>'
                     if(select_item_type == "IMAGE"){
-                    content += '<select name="image_rol"  size="5" class="image_role_'+i+'" multiple>'
+                    content += '<select name="image_rol"  size="5" class="image_role_'+i+'" multiple disabled>'
                         jQuery.each(attr, function( k, attr_val ){
                             var selected = "";
                             if(jQuery.inArray(attr_val.code, selected_role) > -1) {
@@ -742,6 +742,7 @@ $get_base_url = $block->getBaseUrl();
             }
             jQuery(".save_image").on('click',function(){
                 var all_selected_images = [];
+				var formKey = FORM_KEY;
                 jQuery('.bynder_selected_images').each(function(i){
                     var select_img = jQuery(this).val();
                     var item_index = jQuery(this).attr("data-index");
@@ -966,7 +967,8 @@ $get_base_url = $block->getBaseUrl();
                         data: {
                             product_id: product_id,
                             image:myJsonString,
-                            image_coockie_id:image_coockie_id
+                            image_coockie_id:image_coockie_id,
+							form_key: formKey
                         },
                         success: function (res) {
                             /* success data*/
@@ -976,6 +978,7 @@ $get_base_url = $block->getBaseUrl();
         });
         jQuery('#import_image_bynder').click(function () {
             var all_selected_images = [];
+			var formKey = FORM_KEY;
             jQuery('.bynder_selected_images').each(function(i){
                 var select_img = jQuery(this).val();
                 var item_index = jQuery(this).attr("data-index");
@@ -1020,7 +1023,8 @@ $get_base_url = $block->getBaseUrl();
                         product_id: cur_product_id,
                         bynder_in:bynder_img_n,
                         image:myJsonString,
-                        sku:cur_sku
+                        sku:cur_sku,
+						form_key: formKey
                     },
                     success: function (res) {
                         if(res.status == 1){

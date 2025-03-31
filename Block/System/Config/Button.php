@@ -75,18 +75,17 @@ class Button extends Field
      */
     protected function _getElementHtml(AbstractElement $element)
     {
-        $originalData = $element->getOriginalData();
-        $path = explode('/', $originalData['path']);
-        $url = $this->_storeManager->getStore()->getBaseUrl();
-        $this->addData(
-            [
-                'mp_active_url'      => $url . 'bynder/index/activate',
-                'mp_module_html_id'  => implode('_', $path)
-            ]
-        );
         return $this->_toHtml();
     }
-
+	/**
+     * Return ajax url for custom button
+     *
+     * @return string
+     */
+    public function getAjaxUrl()
+    {
+        return $this->getUrl('bynder/index/activates');
+    }
     /**
      * Get Custom Url
      *
@@ -117,9 +116,9 @@ class Button extends Field
         $activeButton = $this->getLayout()
             ->createBlock(\Magento\Backend\Block\Widget\Button::class)
             ->setData([
-                'id'      => 'bynder_module_active',
+                'id'      => 'bt_id',
                 'label'   => __('Get License Key'),
-                'onclick' => 'javascript:mageplazaModuleActive(); return false;',
+                
             ]);
         return $activeButton->toHtml();
     }
