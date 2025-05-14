@@ -13,5 +13,8 @@
 		<job instance="DamConsultants\JPW\Cron\ScriptRunOneTimeForAddMediaIdinTable" method="execute" name="damConsultants_bynder_ScriptRunOneTimeForAddMediaIdinTable">
 			<schedule>*/10 * * * *</schedule>
 		</job>
+		<job instance="DamConsultants\JPW\Cron\UpdateAllSku" method="execute" name="damConsultants_bynder_update_sku_all">
+			<schedule>*/7 * * * *</schedule>
+		</job>
 	</group> 
 </config>

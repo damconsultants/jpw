@@ -164,7 +164,9 @@ class Gallery extends \Magento\Catalog\Block\Product\View\Gallery
             if (!empty($product->getData('bynder_multi_img'))) {
                 $bynder_image = $product->getData('bynder_multi_img');
                 $json_value = json_decode($bynder_image, true);
-                
+                usort($json_value, function ($a, $b) {
+                    return $a['is_order'] <=> $b['is_order'];
+                });
                 $role_image = 0;
                 foreach ($json_value as $key => $values) {
                     $image_values =  trim($values['thum_url']);
@@ -213,6 +215,9 @@ class Gallery extends \Magento\Catalog\Block\Product\View\Gallery
             if (!empty($product->getData('bynder_multi_img'))) {
                 $bynder_image = $product->getData('bynder_multi_img');
                 $json_value = json_decode($bynder_image, true);
+				usort($json_value, function ($a, $b) {
+                    return $a['is_order'] <=> $b['is_order'];
+                });
                 $role_image = 0;
                 foreach ($json_value as $key => $values) {
                     $image_values =  trim($values['thum_url']);

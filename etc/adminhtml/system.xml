@@ -10,7 +10,10 @@
             <resource>DamConsultants_JPW::config</resource>
             <group id="bynder_credential" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>JPW Credential</label>
-                <field id="bynderdomain" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="version_check" translate="label" type="label" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <frontend_model>DamConsultants\JPW\Block\Adminhtml\System\Config\VersionCheck</frontend_model>
+                </field>
+                <field id="bynderdomain" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>JPW Domain</label>
                     <comment>Enter your JPW Domain Name Here Without https://.</comment>
                 </field>
@@ -25,10 +28,14 @@
                 <field id="bt_id" translate="label" type="button" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
                     <frontend_model>DamConsultants\JPW\Block\System\Config\Button</frontend_model>
                 </field>
-                 <field id="module_version" translate="label" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                <!--<field id="module_version" translate="label" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Module Version</label>
                     <frontend_model>DamConsultants\JPW\Block\Adminhtml\System\Config\Version</frontend_model>
-                </field>
+                </field>-->
+                <!-- <field id="version_check" translate="label" type="label" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Version Check</label>
+                    <frontend_model>DamConsultants\JPW\Block\Adminhtml\System\Config\VersionCheck</frontend_model>
+                </field> -->
             </group>
         </section>
         <section id="byndersyncdata" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -61,27 +68,25 @@
                 <field id="bt_id_1" translate="label" type="button" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="3">
                     <frontend_model>DamConsultants\JPW\Block\System\Config\SyncButton</frontend_model>
                 </field>
+				<field id="bt_id_3" translate="label" type="button" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="3">
+                    <frontend_model>DamConsultants\JPW\Block\System\Config\SyncAllButton</frontend_model>
+                </field>
             </group>
         </section>
        
-        <section id="byndeimageconfig" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
+        <!--<section id="byndeimageconfig" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Image Configuration</label>
             <tab>bynder_tab</tab>
             <resource>DamConsultants_JPW::config</resource>
             <group id="bynder_image" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Configuration Product Image</label>
-                <!--<field id="selectimage" translate="label" type="multiselect" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Select Image Configuration</label>        
-                    <source_model>DamConsultants\JPW\Model\Config\Source\Radio</source_model>
-                    <comment>Select The Image type which type of image sync. to magento</comment>
-                </field>-->
 				<field id="selectimage" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Do you want to diplay default configuration product image?</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
 					<comment>When Select "No" then Frontend Side Not Show Configuration Product Main image when select child product</comment>
                 </field>
             </group> 
-        </section>
+        </section>-->
         <section id="cronimageconfig" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Cron Config</label>
             <tab>bynder_tab</tab>

@@ -5,47 +5,75 @@
        <add id="DamConsultants_JPW::menu"
            title="JPW Sync. Log" module="DamConsultants_JPW"
            sortOrder="10"
-           resource="Magento_Backend::content"
+           resource="DamConsultants_JPW::menu"
            />
            <!-- START: new node -->
-       <add id="DamConsultants_JPW::menu_item"
-           title="Cron Action Log" module="DamConsultants_JPW"
+		<add id="DamConsultants_JPW::menu_item5"
+           title="Meta properties setting" module="DamConsultants_JPW"
            sortOrder="10" parent="DamConsultants_JPW::menu"
-           action="bynder/index/grid"
-           resource="DamConsultants_JPW::menu_item"
+           resource="DamConsultants_JPW::menu_item5"
            />
-       <!-- END:   new node -->
-        <!-- START: new node -->
-       <add id="DamConsultants_JPW::menu_item3"
-           title="Replace Cron Action Log" module="DamConsultants_JPW"
-           sortOrder="10" parent="DamConsultants_JPW::menu"
-           action="bynder/index/replacecrongrid"
-           resource="DamConsultants_JPW::menu_item3"
-           />
-       <!-- END:   new node -->
-       <!-- START: new node -->
-       <add id="DamConsultants_JPW::menu_item2"
-           title="Synchronization Log" module="DamConsultants_JPW"
-           sortOrder="10" parent="DamConsultants_JPW::menu"
-           action="bynder/index/sync"
-           resource="DamConsultants_JPW::menu_item2"
-           />
-       <!-- END:   new node -->
-        <!-- START: new node -->
-       <add id="DamConsultants_JPW::menu_item1"
-           title="JPW MetaProperty " module="DamConsultants_JPW"
-           sortOrder="10" parent="DamConsultants_JPW::menu"
+		   
+		<add id="DamConsultants_JPW::menu_item1"
+           title="JPW MetaProperty" module="DamConsultants_JPW"
+           sortOrder="10" parent="DamConsultants_JPW::menu_item5"
            action="bynder/index/metaproperty"
            resource="DamConsultants_JPW::menu_item1"
            />
-       <!-- END:   new node -->
-	   <!-- START: new node -->
-       <add id="DamConsultants_JPW::menu_item4"
-           title="Delete Cron Action Log" module="DamConsultants_JPW"
+		  
+		<add id="DamConsultants_JPW::menu_item6"
+           title="Cron Log" module="DamConsultants_JPW"
            sortOrder="10" parent="DamConsultants_JPW::menu"
+           resource="DamConsultants_JPW::menu_item6"
+           />
+       <add id="DamConsultants_JPW::menu_item"
+           title="Cron Action Log" module="DamConsultants_JPW"
+           sortOrder="10" parent="DamConsultants_JPW::menu_item6"
+           action="bynder/index/grid"
+           resource="DamConsultants_JPW::menu_item"
+           />
+		<add id="DamConsultants_JPW::menu_item3"
+           title="Replace Cron Action Log" module="DamConsultants_JPW"
+           sortOrder="10" parent="DamConsultants_JPW::menu_item6"
+           action="bynder/index/replacecrongrid"
+           resource="DamConsultants_JPW::menu_item3"
+           />
+		<!--<add id="DamConsultants_JPW::menu_item4"
+           title="Delete Cron Action Log" module="DamConsultants_JPW"
+           sortOrder="10" parent="DamConsultants_JPW::menu_item6"
            action="bynder/index/deletecrongrid"
            resource="DamConsultants_JPW::menu_item4"
+           />-->
+       <!-- END:   new node -->
+       <!-- START: new node -->
+	   
+	   <add id="DamConsultants_JPW::menu_item7"
+           title="Manual sync Log" module="DamConsultants_JPW"
+           sortOrder="10" parent="DamConsultants_JPW::menu"
+           resource="DamConsultants_JPW::menu_item6"
+           />
+       <add id="DamConsultants_JPW::menu_item2"
+           title="Synchronization Log" module="DamConsultants_JPW"
+           sortOrder="10" parent="DamConsultants_JPW::menu_item7"
+           action="bynder/index/sync"
+           resource="DamConsultants_JPW::menu_item2"
+           />
+        <add id="DamConsultants_JPW::menu_item9"
+           title="Check Sku Log" module="DamConsultants_JPW"
+           sortOrder="10" parent="DamConsultants_JPW::menu_item7"
+           action="bynder/index/sku"
+           resource="DamConsultants_JPW::menu_item9"
            />
        <!-- END:   new node -->
+        <!-- START: new node -->
+       
+		
+       <!-- END:   new node -->
+	    <add id="DamConsultants_JPW::menu_item8"
+           title="Configuration Settings" module="DamConsultants_JPW"
+           sortOrder="10" parent="DamConsultants_JPW::menu"
+           resource="DamConsultants_JPW::menu_item6"
+           />
+       <add id="DamConsultants_JPW::settings" title="Configuration" module="DamConsultants_JPW" sortOrder="10" resource="Magento_Backend::content" parent="DamConsultants_JPW::menu_item8" action="adminhtml/system_config/edit/section/bynderconfig"/>
    </menu>
 </config> 

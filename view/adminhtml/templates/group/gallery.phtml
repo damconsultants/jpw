@@ -259,12 +259,14 @@ $get_base_url = $block->getBaseUrl();
         var selected_images = JSON.parse(old_selected_images);
         var item_length = selected_images.length;
         var content = '';
-        
+        selected_images.sort(function(a, b) {
+			return a.is_order - b.is_order;
+		});
         jQuery.each(selected_images, function( i, img_data ){
 
             var selected_role = img_data.image_role;
             var select_item_type = img_data.item_type;
-
+			var is_order = img_data.is_order
             var bynder_media_id = "";
             if(typeof img_data.bynder_md_id != "undefined"){
                 bynder_media_id = img_data.bynder_md_id;
@@ -278,12 +280,13 @@ $get_base_url = $block->getBaseUrl();
             var item_thum_url = img_data.thum_url;
             var original_item_url = img_data.item_url;
             var check_is_imported = img_data.is_import;
-            
+            var check_is_order = img_data.is_order;
             content += '<tr style="background: #efefef;"><td>'
             content += '<img src ="'+drag_img+'"/></td><td>'
             content += '<input class="url bynder_selected_images" type="text"'+
                         'data-bynderid="'+bynder_media_id+'"'+
                         'data-isimport="'+check_is_imported+'"'+
+						'data-isorder="'+check_is_order+'"'+
                         'data-index="'+i+'" id="textboxId_'+i+'" data-imgType="'+select_item_type+'"'+
                         'data-thumUrl="'+item_thum_url+'" value="'+original_item_url+'" />'
             content += '</td>'
@@ -751,7 +754,7 @@ $get_base_url = $block->getBaseUrl();
                     var item_thum_url = jQuery(this).attr("data-thumUrl");
                     var is_imported = jQuery(this).attr("data-isimport");
                     var item_media_id = jQuery(this).attr("data-bynderid");
-
+					var is_order = jQuery(this).attr("data-isorder");
                     var n_image_role = jQuery('.image_role_'+item_index).val();
                     
                     /* this is new code for update unique role for image */                    
@@ -773,7 +776,8 @@ $get_base_url = $block->getBaseUrl();
                         "item_type" : item_img_type,
                         "thum_url" : item_thum_url,
                         "bynder_md_id": item_media_id,
-                        "is_import" : is_imported
+                        "is_import" : is_imported,
+						"is_order" : is_order
                     };
                     all_selected_images.push(images_details);
                 });

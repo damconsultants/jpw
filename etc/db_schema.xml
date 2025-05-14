@@ -114,4 +114,15 @@
          <column name="id" />
       </constraint>
    </table>
+   <table name="bynder_update_sku" resource="default" engine="innodb" comment="Bynder Update Sku">
+      <column xsi:type="int" name="id" padding="7" unsigned="false" nullable="false" identity="true" comment="id" />
+      <column xsi:type="text" name="sku" nullable="true"  comment="Product sku" />
+      <column xsi:type="text" name="select_attribute" nullable="true"  comment="bynder data sync. image, doc, video" />
+      <column xsi:type="text" name="select_store" nullable="true"  comment="Store Id " />
+      <column xsi:type="text" name="status" nullable="true"  comment="Status Pendding processed" />
+      <column xsi:type="text" name="token" nullable="true"  comment="Token" />
+      <constraint xsi:type="primary" referenceId="PRIMARY">
+         <column name="id" />
+      </constraint>
+   </table>
 </schema>

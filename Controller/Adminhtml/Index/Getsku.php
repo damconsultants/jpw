@@ -167,7 +167,7 @@ class Getsku extends \Magento\Backend\App\Action
         }
         if (count($fetch_sku) > 0) {
             $status = 1;
-            $data_sku = $fetch_sku;
+            $data_sku = implode(",", $fetch_sku);
         } else {
             $status = 0;
             $data_sku = "There is not any empty Bynder Data in product";

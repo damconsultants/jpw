@@ -1,0 +1,9 @@
+type CustomProductData {
+  bynder_multi_img: String
+  use_bynder_both_image: String
+  use_bynder_cdn: String
+}
+
+extend type ProductInterface {
+  custom_data: CustomProductData @resolver(class: "DamConsultants\\JPW\\Model\\Resolver\\Product\\CustomLabel")
+}
