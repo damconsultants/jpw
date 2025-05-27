@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">  
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
    <menu>
        <add id="DamConsultants_JPW::menu"
-           title="JPW Sync. Log" module="DamConsultants_JPW"
+           title="Bynder Configuration" module="DamConsultants_JPW"
            sortOrder="10"
            resource="DamConsultants_JPW::menu"
            />
@@ -76,4 +76,4 @@
            />
        <add id="DamConsultants_JPW::settings" title="Configuration" module="DamConsultants_JPW" sortOrder="10" resource="Magento_Backend::content" parent="DamConsultants_JPW::menu_item8" action="adminhtml/system_config/edit/section/bynderconfig"/>
    </menu>
-</config> 
+</config>

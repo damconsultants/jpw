@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">
-    <update handle="styles"/>
+    <update handle="bynder"/>
     <body>
         <referenceContainer name="content">
             <uiComponent name="bynder_index_delete"/>

@@ -273,6 +273,7 @@ $get_base_url = $block->getBaseUrl();
             }
 
             var old_img_altText = img_data.alt_text;
+			let old_img_altText_new = old_img_altText.replace(/"/g, '');
             if(typeof old_img_altText == "undefined"){
                 old_img_altText = "";
             }
@@ -294,7 +295,7 @@ $get_base_url = $block->getBaseUrl();
             if(select_item_type == "IMAGE") {
                 content += '<td><input class="url bynder_selected_images_alttext" type="text"' +
                     'data-index="' + i + '" id="alttext_' + i + '" data-imgType="' + select_item_type + '"' +
-                    'value="' + old_img_altText + '" />'
+                    'value="' + old_img_altText_new + '" />'
             }else{
                 content += '<td></td>'
             }
@@ -675,6 +676,7 @@ $get_base_url = $block->getBaseUrl();
                     var input_field_val = data_item.shift();
                     var item_v_url = input_field_val.b_item_url;
                     var item_alt_text = input_field_val.b_alt_text;
+					let item_alt_text_new = item_alt_text.replace(/"/g, '');
                     var item_image_role = input_field_val.b_image_role;
                     var select_item_type = input_field_val.b_img_type;
                     var item_thum_url = input_field_val.b_thum_url;
@@ -705,7 +707,7 @@ $get_base_url = $block->getBaseUrl();
                     if(select_item_type == "IMAGE") {
                         content += '<td><input class="url bynder_selected_images_alttext" type="text"' +
                             'data-index="' + i + '" id="alttext_' + i + '" data-imgType="' + select_item_type + '"' +
-                            'value="' + item_alt_text + '" />'
+                            'value="' + item_alt_text_new + '" />'
                     }else{
                         content += '<td></td>'
                     }

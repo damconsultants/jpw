@@ -256,7 +256,7 @@ class UpdateAllSku
                     'system_name' => $collection_value['system_name']
                 ];
                 $collection_data_slug_val[$collection_value['system_slug']] = [
-                    'bynder_property_slug' => $collection_value['bynder_property_slug'],
+                    'bynder_property_slug' => $collection_value['system_slug'],
                 ];
             }
         }
@@ -422,6 +422,12 @@ class UpdateAllSku
 								}
                                 /*$new_bynder_alt_text[] = (strlen($alt_text_vl) > 0)?$alt_text_vl."\n":"###\n";*/
                                 $new_bynder_mediaid_text[] = $bynder_media_id;
+								$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
+								if(isset($data_value[$magento_order_slug])) {
+									foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
+										$is_order[] = $property_Magento_Media_Order . "\n";
+									}
+								}
                             } else {
                                 $new_magento_role_list[] = "###"."\n";
 								/* this part added because sometime role not avaiable but alt text will be there*/
@@ -432,7 +438,7 @@ class UpdateAllSku
 									$new_bynder_alt_text[] = "###\n";
 								}
 								$new_bynder_mediaid_text[] = $bynder_media_id."\n";
-								$magento_order_slug = "property_" . $collection_data_slug_val['image_order']['bynder_property_slug'];
+								$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
 								if(isset($data_value[$magento_order_slug])) {
 									foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
 										$is_order[] = $property_Magento_Media_Order . "\n";
@@ -451,7 +457,7 @@ class UpdateAllSku
 							$new_bynder_alt_text[] = "###\n";
 						}
 						$new_bynder_mediaid_text[] = $bynder_media_id."\n";
-						$magento_order_slug = "property_" . $collection_data_slug_val['image_order']['bynder_property_slug'];
+						$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
 						if(isset($data_value[$magento_order_slug])) {
 							foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
 								$is_order[] = $property_Magento_Media_Order . "\n";
@@ -460,7 +466,7 @@ class UpdateAllSku
                     }
 					$new_bynder_mediaid_text = array_unique($new_bynder_mediaid_text);
 					if ($data_value['type'] == "image") {
-						$image_link = isset($data_value['derivatives'][0]['public_url']) ? $data_value['derivatives'][0]['public_url'] : $image_data['transformBaseUrl'];
+						$image_link = isset($data_value['derivatives'][0]['public_url']) ? $data_value['derivatives'][0]['public_url'] : $data_value['derivatives'][1]['public_url'];
 						array_push($data_arr, $data_sku[0]);
 						$data_p = [
 							"sku" => $data_sku[0],
@@ -834,6 +840,16 @@ class UpdateAllSku
                             }
                         }
                     }
+					foreach ($image_detail as &$items) {
+						if (isset($items['image_role']) && is_array($items['image_role'])) {
+							// Clean out "###" from image_role
+							$items['image_role'] = array_values(array_filter(
+								$items['image_role'],
+								fn($role) => trim($role) !== '###'
+							));
+						}
+					}
+					unset($items);
                     $d_img_roll = "";
                     $d_media_id = [];
                     if (count($diff_image_detail) > 0) {

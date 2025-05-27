@@ -2,7 +2,7 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
         <tab id="bynder_tab" translate="label" sortOrder="0">
-            <label> JPW Configuration </label>
+            <label>Bynder Log</label>
         </tab>
         <section id="bynderconfig" translate="label" type="text" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Configuration</label>
@@ -45,7 +45,7 @@
             <group id="bynder_sync_data" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Sync. JPW Data</label>
                 <field id="select" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Select Attribute</label>        
+                    <label>Select Attribute</label>
                     <source_model>DamConsultants\JPW\Model\Config\Source\Select</source_model>
                     <comment>Select the Attribute which Data you want to Sync.</comment>
                 </field>
@@ -143,7 +143,7 @@
                     <frontend_model>DamConsultants\JPW\Block\System\Config\FeatchNullSkuToMagento</frontend_model>
                 </field>
                 <!-- <comment>Select The Cron Frequency.</comment> -->
-                
+
             </group>
             <group id="auto_add_bynder" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
                 <label>Auto Add Data Product</label>
@@ -257,6 +257,6 @@
                 </field>
             </group>     -->
         </section>
-        
+
     </system>
 </config>

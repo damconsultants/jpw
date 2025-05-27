@@ -251,7 +251,7 @@ class Psku extends \Magento\Backend\App\Action
                     'system_name' => $collection_value['system_name']
                 ];
                 $collection_data_slug_val[$collection_value['system_slug']] = [
-                    'bynder_property_slug' => $collection_value['bynder_property_slug'],
+                    'bynder_property_slug' => $collection_value['system_slug'],
                 ];
             }
         }
@@ -362,10 +362,11 @@ class Psku extends \Magento\Backend\App\Action
 		$doc_data_arr = [];
 		$doc_data = [];
         $result = $this->resultJsonFactory->create();
+		//echo "<pre>"; print_r($convert_array); exit;
         if ($convert_array['status'] == 1) {
             foreach ($convert_array['data'] as $k => $data_value) {
 				$is_order = array();
-				//echo "<pre>"; print_r($select_attribute); exit;
+				
                 if ($select_attribute == $data_value['type']) {
                     $bynder_media_id = $data_value['id'];
                     $image_data = $data_value['thumbnails'];
@@ -398,6 +399,13 @@ class Psku extends \Magento\Backend\App\Action
 								}
                                 /*$new_bynder_alt_text[] = (strlen($alt_text_vl) > 0)?$alt_text_vl."\n":"###\n";*/
                                 $new_bynder_mediaid_text[] = $bynder_media_id;
+								$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
+								//echo "<pre>"; print_r($magento_order_slug); exit;
+								if(isset($data_value[$magento_order_slug])) {
+									foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
+										$is_order[] = $property_Magento_Media_Order . "\n";
+									}
+								}
                             } else {
                                 $new_magento_role_list[] = "###"."\n";
 								/* this part added because sometime role not avaiable but alt text will be there*/
@@ -408,7 +416,8 @@ class Psku extends \Magento\Backend\App\Action
 									$new_bynder_alt_text[] = "###\n";
 								}
 								$new_bynder_mediaid_text[] = $bynder_media_id."\n";
-								$magento_order_slug = "property_" . $collection_data_slug_val['image_order']['bynder_property_slug'];
+								$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
+								//echo "<pre>"; print_r($magento_order_slug); exit;
 								if(isset($data_value[$magento_order_slug])) {
 									foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
 										$is_order[] = $property_Magento_Media_Order . "\n";
@@ -427,7 +436,7 @@ class Psku extends \Magento\Backend\App\Action
 							$new_bynder_alt_text[] = "###\n";
 						}
 						$new_bynder_mediaid_text[] = $bynder_media_id."\n";
-						$magento_order_slug = "property_" . $collection_data_slug_val['image_order']['bynder_property_slug'];
+						$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
 						if(isset($data_value[$magento_order_slug])) {
 							foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
 								$is_order[] = $property_Magento_Media_Order . "\n";
@@ -438,7 +447,7 @@ class Psku extends \Magento\Backend\App\Action
 					
                     if ($data_value['type'] == "image") {
 
-                        $image_link = isset($data_value['derivatives'][0]['public_url']) ? $data_value['derivatives'][0]['public_url'] : $image_data['transformBaseUrl'];
+                        $image_link = isset($data_value['derivatives'][0]['public_url']) ? $data_value['derivatives'][0]['public_url'] : $data_value['derivatives'][1]['public_url'];
                         array_push($data_arr, $data_sku[0]);
                         $data_p = [
                             "sku" => $data_sku[0],
@@ -518,6 +527,12 @@ class Psku extends \Magento\Backend\App\Action
 								}
 								/*$new_bynder_alt_text[] = (strlen($alt_text_vl) > 0)?$alt_text_vl."\n":"###\n";*/
 								$new_bynder_mediaid_text[] = $bynder_media_id;
+								$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
+								if(isset($data_value[$magento_order_slug])) {
+									foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
+										$is_order[] = $property_Magento_Media_Order . "\n";
+									}
+								}
                             } else {
                                 $new_magento_role_list[] = "###"."\n";
 								/* this part added because sometime role not avaiable but alt text will be there*/
@@ -528,7 +543,7 @@ class Psku extends \Magento\Backend\App\Action
 									$new_bynder_alt_text[] = "###\n";
 								}
 								$new_bynder_mediaid_text[] = $bynder_media_id."\n";
-								$magento_order_slug = "property_" . $collection_data_slug_val['image_order']['bynder_property_slug'];
+								$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
 								if(isset($data_value[$magento_order_slug])) {
 									foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
 										$is_order[] = $property_Magento_Media_Order . "\n";
@@ -547,7 +562,7 @@ class Psku extends \Magento\Backend\App\Action
 							$new_bynder_alt_text[] = "###\n";
 						}
 						$new_bynder_mediaid_text[] = $bynder_media_id."\n";
-						$magento_order_slug = "property_" . $collection_data_slug_val['image_order']['bynder_property_slug'];
+						$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
 						if(isset($data_value[$magento_order_slug])) {
 							foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
 								$is_order[] = $property_Magento_Media_Order . "\n";
@@ -556,7 +571,7 @@ class Psku extends \Magento\Backend\App\Action
                     }
 					$new_bynder_mediaid_text = array_unique($new_bynder_mediaid_text);
                     if ($data_value['type'] == "image") {
-                        $image_link = isset($data_value['derivatives'][0]['public_url']) ? $data_value['derivatives'][0]['public_url'] : $image_data['transformBaseUrl'];
+                        $image_link = isset($data_value['derivatives'][0]['public_url']) ? $data_value['derivatives'][0]['public_url'] : $data_value['derivatives'][1]['public_url'];
                         array_push($data_arr, $data_sku[0]);
                         $data_p = [
                             "sku" => $data_sku[0],
@@ -863,19 +878,23 @@ class Psku extends \Magento\Backend\App\Action
 									"is_order" => $is_order
                                 ];
                                 $total_new_values = count($image_detail);
+								
                                 if ($total_new_values > 1) {
                                     foreach ($image_detail as $nn => $n_img) {
                                         if ($n_img['item_type'] == "IMAGE" && $nn != ($total_new_values - 1)) {
                                             if ($new_magento_role_option_array[$vv] != "###") {
+												
                                                 $new_mg_role_array = (array)$new_magento_role_option_array[$vv];
                                                 if (count($n_img["image_role"])>0 && count($new_mg_role_array)>0) {
                                                     $result_val=array_diff($n_img["image_role"], $new_mg_role_array);
+													
                                                     $image_detail[$nn]["image_role"] = $result_val;
                                                 }
                                             }
                                         }
                                     }
                                 }
+								
                                 if (!in_array($item_url[0], $all_item_url)) {
 									$is_order = isset($isOrder[$vv]) ? $isOrder[$vv] : "";
                                     $diff_image_detail[] = [
@@ -931,6 +950,16 @@ class Psku extends \Magento\Backend\App\Action
                             }
                         }
                     }
+					foreach ($image_detail as &$items) {
+						if (isset($items['image_role']) && is_array($items['image_role'])) {
+							// Clean out "###" from image_role
+							$items['image_role'] = array_values(array_filter(
+								$items['image_role'],
+								fn($role) => trim($role) !== '###'
+							));
+						}
+					}
+					unset($items);
                     $d_img_roll = "";
                     $d_media_id = [];
                     if (count($diff_image_detail) > 0) {
@@ -1080,6 +1109,16 @@ class Psku extends \Magento\Backend\App\Action
                             }
                         }
                     }
+					foreach ($image_detail as &$items) {
+						if (isset($items['image_role']) && is_array($items['image_role'])) {
+							// Clean out "###" from image_role
+							$items['image_role'] = array_values(array_filter(
+								$items['image_role'],
+								fn($role) => trim($role) !== '###'
+							));
+						}
+					}
+					unset($items);
                     $media_id = [];
                     $image = [];
                     foreach ($image_detail as $img) {
@@ -1445,6 +1484,16 @@ class Psku extends \Magento\Backend\App\Action
                             }
                         }
                     }
+					foreach ($image_detail as &$items) {
+						if (isset($items['image_role']) && is_array($items['image_role'])) {
+							// Clean out "###" from image_role
+							$items['image_role'] = array_values(array_filter(
+								$items['image_role'],
+								fn($role) => trim($role) !== '###'
+							));
+						}
+					}
+					unset($items);
 					$merge_both = array_merge($image_detail, $video_detail);
                     $merge_both_diff = array_merge($diff_image_detail, $video_detail_diff);
                     $d_img_roll = "";
@@ -1742,6 +1791,16 @@ class Psku extends \Magento\Backend\App\Action
                             }
                         }
                     }
+					foreach ($image_detail as &$items) {
+						if (isset($items['image_role']) && is_array($items['image_role'])) {
+							// Clean out "###" from image_role
+							$items['image_role'] = array_values(array_filter(
+								$items['image_role'],
+								fn($role) => trim($role) !== '###'
+							));
+						}
+					}
+					unset($items);
                     $media_id = [];
                     $image = [];
 					$type = [];
