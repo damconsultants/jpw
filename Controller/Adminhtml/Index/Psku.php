@@ -151,8 +151,12 @@ class Psku extends \Magento\Backend\App\Action
                         $getIsJson = $this->getIsJSON($get_data);
                         if (!empty($get_data) && $getIsJson) {
                             $respon_array = json_decode($get_data, true);
+                            /* echo "<pre>";
+                            print_r($respon_array["data"]);
+                            exit; */
                             if ($respon_array['status'] == 1) {
                                 $convert_array = json_decode($respon_array['data'], true);
+                     
                                 if ($convert_array['status'] == 1) {
                                     $current_sku = $sku;
                                     try {
@@ -365,6 +369,7 @@ class Psku extends \Magento\Backend\App\Action
 		//echo "<pre>"; print_r($convert_array); exit;
         if ($convert_array['status'] == 1) {
             foreach ($convert_array['data'] as $k => $data_value) {
+                
 				$is_order = array();
 				
                 if ($select_attribute == $data_value['type']) {
@@ -380,6 +385,7 @@ class Psku extends \Magento\Backend\App\Action
                     $new_bynder_alt_text =[];
                     $new_bynder_mediaid_text = [];
                     $new_image_role = [];
+                    
                     if (count($bynder_image_role) > 0) {
                         foreach ($bynder_image_role as $m_bynder_role) {
                             if (!empty($m_bynder_role)) {
@@ -425,6 +431,7 @@ class Psku extends \Magento\Backend\App\Action
 								}
                             }
                         }
+						$is_order = array_unique($is_order);
                     } else {
                         //$new_image_role = ['Base', 'Small', 'Thumbnail', 'Swatch'];
                         $new_magento_role_list[] = "###"."\n";
@@ -462,7 +469,7 @@ class Psku extends \Magento\Backend\App\Action
                         if ($data_value['type'] == 'video') {
                             $new_image_role = [];
                             /*$video_link = $image_data["image_link"] . '@@' . $image_data["webimage"];*/
-                            $video_link = $data_value["videoPreviewURLs"][0] . '@@' . $image_data["webimage"];
+                            $video_link = $image_data['s3_link'] . '@@' . $data_value['derivatives'][0]['original_link'];
                             array_push($data_arr, $data_sku[0]);
                             $data_p = [
                                 "sku" => $data_sku[0],
@@ -551,6 +558,7 @@ class Psku extends \Magento\Backend\App\Action
 								}
                             }
                         }
+						$is_order = array_unique($is_order);
                     } else {
                         //$new_image_role = ['Base', 'Small', 'Thumbnail', 'Swatch'];
                         $new_magento_role_list[] = "###"."\n";
@@ -585,7 +593,7 @@ class Psku extends \Magento\Backend\App\Action
                     } else {
                         if ($data_value['type'] == 'video') {
                             /*$video_link = $image_data["image_link"] . '@@' . $image_data["webimage"];*/
-                            $video_link = $data_value["videoPreviewURLs"][0] . '@@' . $image_data["webimage"];
+                            $video_link = $image_data['s3_link'] . '@@' . $data_value['derivatives'][0]['original_link'];
                             array_push($data_arr, $data_sku[0]);
                             $data_p = [
                                 "sku" => $data_sku[0],
@@ -1168,7 +1176,7 @@ class Psku extends \Magento\Backend\App\Action
                         }
                     }
                     foreach ($new_video_array as $vv => $video_value) {
-                        $item_url = explode("@@", $video_value);
+                        $item_url = explode("?", $video_value);
                         $thum_url = explode("@@", $video_value);
                         $media_video_explode = explode("/", $item_url[0]);
                         $find_video = strpos($video_value, "@@");
@@ -1226,7 +1234,7 @@ class Psku extends \Magento\Backend\App\Action
                     foreach ($new_video_array as $vv => $video_value) {
                         $find_video = strpos($video_value, "@@");
                         if ($find_video) {
-                            $item_url = explode("@@", $video_value);
+                            $item_url = explode("?", $video_value);
                             $thum_url = explode("@@", $video_value);
                             $media_video_explode = explode("/", $item_url[0]);
 							$is_order = isset($isOrder[$vv]) ? $isOrder[$vv] : "";
@@ -1441,7 +1449,8 @@ class Psku extends \Magento\Backend\App\Action
                                     }
                                 }
                             } else {
-								$item_url = explode("@@", $new_image_value);
+								$item_url = explode("?", $new_image_value);
+								$thum_url = explode("@@", $new_image_value);
 								$video_detail_diff = [];
 								$video_detail = [];
                                 if (!empty($new_image_value)) {
@@ -1449,7 +1458,7 @@ class Psku extends \Magento\Backend\App\Action
                                         "item_url" => $item_url[0],
                                         "image_role" => null,
                                         "item_type" => 'VIDEO',
-                                        "thum_url" => $item_url[1],
+                                        "thum_url" => $thum_url[1],
                                         "bynder_md_id" => $bynder_media_id[$vv]
                                     ];
                                     if (!in_array($item_url[0], $all_video_url)) {
@@ -1756,14 +1765,16 @@ class Psku extends \Magento\Backend\App\Action
 								}
                             } else {
 								if (!empty($image_value)) {
-                                    $item_url = explode("@@", $image_value);
+									$item_url = explode("?", $image_value);
+									$thum_url = explode("@@", $image_value);
+                                    //$item_url = explode("?", $video_value);
                                     $media_video_explode = explode("/", $item_url[0]);
 									$is_order = isset($isOrder[$vv]) ? $isOrder[$vv] : "";
                                     $video_detail[] = [
                                         "item_url" => $item_url[0],
                                         "image_role" => null,
                                         "item_type" => 'VIDEO',
-                                        "thum_url" => $item_url[1],
+                                        "thum_url" => $thum_url[1],
                                         "bynder_md_id" => $bynder_media_id[$vv],
 										"is_order" => $is_order
                                     ];

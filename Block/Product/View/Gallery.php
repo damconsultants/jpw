@@ -234,7 +234,7 @@ class Gallery extends \Magento\Catalog\Block\Product\View\Gallery
                         'img' => $image_values,
                         'full' => $image_values,
                         'caption' => $this->getProduct()->getName(),
-                        'position' => $key + 1,
+                        'position' => $values['is_order'],
                         'isMain' =>$role_image,
                         'type' => ($values['item_type'] == 'IMAGE') ? 'image' : 'video',
                         'videoUrl' => ($values['item_type'] == 'VIDEO') ? $values['item_url'] : null,

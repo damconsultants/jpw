@@ -273,7 +273,10 @@ $get_base_url = $block->getBaseUrl();
             }
 
             var old_img_altText = img_data.alt_text;
-			let old_img_altText_new = old_img_altText.replace(/"/g, '');
+			var old_img_altText_new = "";
+			if(img_data.item_type == 'IMAGE') {
+				old_img_altText_new = old_img_altText.replace(/"/g, '');
+			} 
             if(typeof old_img_altText == "undefined"){
                 old_img_altText = "";
             }

@@ -445,6 +445,7 @@ class AutoAddFromMagento
 							}
                         }
                     }
+					$is_order = array_unique($is_order);
                 } else {
                     //$new_image_role = ['Base', 'Small', 'Thumbnail', 'Swatch'];
                     $new_magento_role_list[] = "###"."\n";
@@ -480,7 +481,7 @@ class AutoAddFromMagento
                     array_push($data_val_arr, $data_p);
                 } else {
                     if ($data_value['type'] == 'video') {
-                        $video_link = $data_value["videoPreviewURLs"][0] . '@@' . $image_data["webimage"];
+                        $video_link = $image_data['s3_link'] . '@@' . $data_value['derivatives'][0]['original_link'];
                         array_push($data_arr, $data_sku[0]);
                         $data_p = [
                             "sku" => $data_sku[0],
@@ -707,7 +708,7 @@ class AutoAddFromMagento
                                     }
                                 }
                             } else {
-                                $item_url = explode("@@", $new_image_value);
+                                $item_url = explode("?", $new_image_value);
                                 $thum_url = explode("@@", $new_image_value);
                                 $media_video_explode = explode("/", $item_url[0]);
                                 $logger->info("video_detail => ". $item_url[0]);

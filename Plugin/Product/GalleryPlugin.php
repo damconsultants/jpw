@@ -33,7 +33,9 @@ class GalleryPlugin
                 if (!empty($product->getData('bynder_multi_img'))) {
                     $bynderImage = $product->getData('bynder_multi_img');
                     $jsonValue = json_decode($bynderImage, true);
-
+					usort($jsonValue, function ($a, $b) {
+						return $a['is_order'] <=> $b['is_order'];
+					});
                     $roleImage = 0;
                     foreach ($jsonValue as $key => $values) {
                         $imageValues = trim($values['thum_url']);
@@ -66,6 +68,9 @@ class GalleryPlugin
                 if (!empty($product->getData('bynder_multi_img'))) {
                     $bynderImage = $product->getData('bynder_multi_img');
                     $jsonValue = json_decode($bynderImage, true);
+					usort($jsonValue, function ($a, $b) {
+						return $a['is_order'] <=> $b['is_order'];
+					});
                     $roleImage = 0;
 
                     foreach ($jsonValue as $key => $values) {

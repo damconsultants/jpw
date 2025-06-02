@@ -446,6 +446,7 @@ class UpdateAllSku
 								}
                             }
                         }
+						$is_order = array_unique($is_order);
                     } else {
                         //$new_image_role = ['Base', 'Small', 'Thumbnail', 'Swatch'];
                         $new_magento_role_list[] = "###"."\n";
@@ -480,7 +481,7 @@ class UpdateAllSku
 					} else {
 						if ($data_value['type'] == 'video') {
 							/*$video_link = $image_data["image_link"] . '@@' . $image_data["webimage"];*/
-							$video_link = $data_value["videoPreviewURLs"][0] . '@@' . $image_data["webimage"];
+							$video_link = $image_data['s3_link'] . '@@' . $data_value['derivatives'][0]['original_link'];
 							array_push($data_arr, $data_sku[0]);
 							$data_p = [
 								"sku" => $data_sku[0],
@@ -1057,7 +1058,7 @@ class UpdateAllSku
                         }
                     }
                     foreach ($new_video_array as $vv => $video_value) {
-                        $item_url = explode("@@", $video_value);
+                        $item_url = explode("?", $video_value);
                         $thum_url = explode("@@", $video_value);
                         $media_video_explode = explode("/", $item_url[0]);
                         $find_video = strpos($video_value, "@@");
@@ -1115,7 +1116,7 @@ class UpdateAllSku
                     foreach ($new_video_array as $vv => $video_value) {
                         $find_video = strpos($video_value, "@@");
                         if ($find_video) {
-                            $item_url = explode("@@", $video_value);
+                            $item_url = explode("?", $video_value);
                             $thum_url = explode("@@", $video_value);
                             $media_video_explode = explode("/", $item_url[0]);
 							$is_order = isset($isOrder[$vv]) ? $isOrder[$vv] : "";
@@ -1331,6 +1332,7 @@ class UpdateAllSku
                                     }
                                 }
                             } else {
+								$item_url = explode("?", $new_image_value);
 								$item_url = explode("@@", $new_image_value);
 								$video_detail_diff = [];
 								$video_detail = [];
@@ -1629,7 +1631,8 @@ class UpdateAllSku
 								}
                             } else {
 								if (!empty($image_value)) {
-                                    $item_url = explode("@@", $image_value);
+                                    $item_url = explode("?", $image_value);
+									$item_url = explode("@@", $image_value);
                                     $media_video_explode = explode("/", $item_url[0]);
 									$is_order = isset($isOrder[$vv]) ? $isOrder[$vv] : "";
                                     $video_detail[] = [
