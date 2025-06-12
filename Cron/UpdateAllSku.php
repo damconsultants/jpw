@@ -110,14 +110,13 @@ class UpdateAllSku
      */
     public function execute()
     {
+		$result = $this->resultJsonFactory->create();
 		$skucollection = $this->magentoSkuCollectionFactory->create();
         $skucollection->addFieldToFilter('status', 'pending')->setPageSize(100);
 		if ($skucollection->getSize() === 0) {
             return $result->setData(['status' => 0, 'message' => 'No pending SKUs to process.']);
         }
         $property_id = null;
-        
-        $result = $this->resultJsonFactory->create();
 
         $collection = $this->metaPropertyCollectionFactory->create()->getData();
         $meta_properties = $this->getMetaPropertiesCollection($collection);
@@ -383,6 +382,7 @@ class UpdateAllSku
         $temp_arr = [];
         $bynder_image_role = [];
         $is_order = [];
+		$doc_data = [];
         $result = $this->resultJsonFactory->create();
         if ($convert_array['status'] == 1) {
             $assets_extra_details = [];
@@ -424,8 +424,10 @@ class UpdateAllSku
                                 $new_bynder_mediaid_text[] = $bynder_media_id;
 								$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
 								if(isset($data_value[$magento_order_slug])) {
-									foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
-										$is_order[] = $property_Magento_Media_Order . "\n";
+									if(count($data_value[$magento_order_slug]) > 0) {
+										foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
+											$is_order[] = $property_Magento_Media_Order . "\n";
+										}
 									}
 								}
                             } else {
@@ -440,8 +442,10 @@ class UpdateAllSku
 								$new_bynder_mediaid_text[] = $bynder_media_id."\n";
 								$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
 								if(isset($data_value[$magento_order_slug])) {
-									foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
-										$is_order[] = $property_Magento_Media_Order . "\n";
+									if(count($data_value[$magento_order_slug]) > 0) {
+										foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
+											$is_order[] = $property_Magento_Media_Order . "\n";
+										}
 									}
 								}
                             }
@@ -460,12 +464,15 @@ class UpdateAllSku
 						$new_bynder_mediaid_text[] = $bynder_media_id."\n";
 						$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
 						if(isset($data_value[$magento_order_slug])) {
-							foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
-								$is_order[] = $property_Magento_Media_Order . "\n";
+							if(count($data_value[$magento_order_slug]) > 0) {
+								foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
+									$is_order[] = $property_Magento_Media_Order . "\n";
+								}
 							}
 						}
                     }
 					$new_bynder_mediaid_text = array_unique($new_bynder_mediaid_text);
+					$new_bynder_alt_text = array_unique($new_bynder_alt_text);
 					if ($data_value['type'] == "image") {
 						$image_link = isset($data_value['derivatives'][0]['public_url']) ? $data_value['derivatives'][0]['public_url'] : $data_value['derivatives'][1]['public_url'];
 						array_push($data_arr, $data_sku[0]);
@@ -510,19 +517,146 @@ class UpdateAllSku
 							array_push($data_val_arr, $data_p);
 						}
 					}
+				} elseif($select_attribute == 'all_attribute') {
+					$bynder_media_id = $data_value['id'];
+                    $image_data = $data_value['thumbnails'];
+                    $bynder_image_role = $image_data['magento_role_options'];
+                    $bynder_alt_text = $image_data['img_alt_text'];
+                    $sku_slug_name = "property_" . $collection_data_slug_val['sku']['bynder_property_slug'];
+                    $data_sku[0] = $current_sku;
+                    /*Below code for multiple derivative according to image roll */
+                    $images_urls_list = [];
+                    $new_magento_role_list = [];
+                    $new_bynder_alt_text =[];
+                    $new_bynder_mediaid_text = [];
+                    $new_image_role = [];
+                    if (count($bynder_image_role) > 0) {
+                        foreach ($bynder_image_role as $m_bynder_role) {
+                            if (!empty($m_bynder_role)) {
+                                //$new_image_role = ['Base', 'Small', 'Thumbnail', 'Swatch'];
+                                if($m_bynder_role == "Thumb") {
+                                    $m_bynder_role = 'Thumbnail';
+                                }
+                                $new_magento_role_list[] = $m_bynder_role;
+                                $alt_text_vl = $data_value["thumbnails"]["img_alt_text"];
+                                if (is_array($data_value["thumbnails"]["img_alt_text"])) {
+									$alt_text_vl = implode(" ", $data_value["thumbnails"]["img_alt_text"]);
+								}
+								if (empty($alt_text_vl)) {
+									$new_bynder_alt_text[] = "###\n";
+								} else {
+									$new_bynder_alt_text[] = $alt_text_vl."\n";
+								}
+								/*$new_bynder_alt_text[] = (strlen($alt_text_vl) > 0)?$alt_text_vl."\n":"###\n";*/
+								$new_bynder_mediaid_text[] = $bynder_media_id;
+								$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
+								if(isset($data_value[$magento_order_slug])) {
+									if(count($data_value[$magento_order_slug]) > 0) {
+										foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
+											$is_order[] = $property_Magento_Media_Order . "\n";
+										}
+									}
+								}
+                            } else {
+                                $new_magento_role_list[] = "###"."\n";
+								/* this part added because sometime role not avaiable but alt text will be there*/
+								$alt_text_vl = $data_value["thumbnails"]["img_alt_text"];
+								if (!empty($alt_text_vl)) {
+									$new_bynder_alt_text[] = $alt_text_vl."\n";
+								} else {
+									$new_bynder_alt_text[] = "###\n";
+								}
+								$new_bynder_mediaid_text[] = $bynder_media_id."\n";
+								$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
+								if(isset($data_value[$magento_order_slug])) {
+									if(count($data_value[$magento_order_slug]) > 0) {
+										foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
+											$is_order[] = $property_Magento_Media_Order . "\n";
+										}
+									}
+								}
+                            }
+                        }
+						$is_order = array_unique($is_order);
+                    } else {
+                        //$new_image_role = ['Base', 'Small', 'Thumbnail', 'Swatch'];
+                        $new_magento_role_list[] = "###"."\n";
+						/* this part added because sometime role not avaiable but alt text will be there*/
+						$alt_text_vl = $data_value["thumbnails"]["img_alt_text"];
+						if (!empty($alt_text_vl)) {
+							$new_bynder_alt_text[] = $alt_text_vl."\n";
+						} else {
+							$new_bynder_alt_text[] = "###\n";
+						}
+						$new_bynder_mediaid_text[] = $bynder_media_id."\n";
+						$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
+						if(isset($data_value[$magento_order_slug])) {
+							if(count($data_value[$magento_order_slug]) > 0) {
+								foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
+									$is_order[] = $property_Magento_Media_Order . "\n";
+								}
+							}
+						}
+                    }
+					$new_bynder_mediaid_text = array_unique($new_bynder_mediaid_text);
+					$new_bynder_alt_text = array_unique($new_bynder_alt_text);
+                    if ($data_value['type'] == "image") {
+                        $image_link = isset($data_value['derivatives'][0]['public_url']) ? $data_value['derivatives'][0]['public_url'] : $data_value['derivatives'][1]['public_url'];
+                        array_push($data_arr, $data_sku[0]);
+                        $data_p = [
+                            "sku" => $data_sku[0],
+                            "url" => [$image_link."\n"], /* chagne by kuldip ladola for testing perpose */
+                            'magento_image_role' => $new_magento_role_list,
+                            'image_alt_text' => $new_bynder_alt_text,
+                            'bynder_media_id_new' => $new_bynder_mediaid_text,
+							'is_order' => $is_order
+                        ];
+                        array_push($data_val_arr, $data_p);
+                    } else {
+                        if ($data_value['type'] == 'video') {
+                            /*$video_link = $image_data["image_link"] . '@@' . $image_data["webimage"];*/
+                            $video_link = $image_data['s3_link'] . '@@' . $data_value['derivatives'][0]['original_link'];
+                            array_push($data_arr, $data_sku[0]);
+                            $data_p = [
+                                "sku" => $data_sku[0],
+                                "url" => [$video_link. "\n"],
+                                'magento_image_role' => $new_image_role,
+                                'image_alt_text' => $new_bynder_alt_text,
+                                'bynder_media_id_new' => $new_bynder_mediaid_text,
+								'is_order' => $is_order,
+                                "type" => "video"
+                            ];
+                            array_push($data_val_arr, $data_p);
+    
+                        } else {
+                            $doc_name = $data_value["name"];
+                            $doc_name_with_space = preg_replace("/[^a-zA-Z]+/", "-", $doc_name);
+                            $doc_link = $image_data["image_link"] . '@@' . $doc_name_with_space;
+                            array_push($doc_data_arr, $data_sku[0]);
+                            $data_p = [
+								"sku" => $data_sku[0],
+								"url" => [$doc_link. "\n"],
+								'magento_image_role' => $new_image_role,
+                                'image_alt_text' => $new_bynder_alt_text,
+                                'bynder_media_id_new' => $new_bynder_mediaid_text,
+								'is_order' => $is_order
+							];
+                            array_push($doc_data, $data_p);
+                        }
+					}
 				}
 			}
         }
-        if ($select_attribute == 'image' || $select_attribute == 'video' || $select_attribute == 'document') {
-            if (count($data_arr) > 0) {
-				$this->getProcessItem($select_attribute, $data_arr, $data_val_arr);
-            } elseif (count($doc_data_arr) > 0) {
-                $this->getProcessItemDoc($select_attribute, $doc_data_arr, $data_val_arr);
-            } else {
-				$result_data = $result->setData(['status' => 0, 'message' => 'No Data Found...']);
-                return $result_data;
-			}
-        }
+        if (count($data_arr) > 0) {
+			$this->getProcessItem($data_arr, $data_val_arr, $select_attribute);
+		}
+		if(count($doc_data_arr) > 0) {
+			$this->getProcessItemDoc($doc_data_arr, $doc_data, $select_attribute);
+		} 
+		if(count($doc_data_arr) == 0 || count($data_arr) == 0) {
+			$result_data = $result->setData(['status' => 0, 'message' => 'No Data Found...']);
+			return $result_data;
+		}
     }
         /**
      * Get Process Item
@@ -532,7 +666,7 @@ class UpdateAllSku
 	 * @param string $select_attribute
      * @return $this
      */
-    public function getProcessItem($select_attribute, $data_arr, $data_val_arr)
+    public function getProcessItem($data_arr, $data_val_arr, $select_attribute)
     {
         $result = $this->resultJsonFactory->create();
         $image_value_details_role = [];
@@ -831,8 +965,14 @@ class UpdateAllSku
                         }
                     }
                     $replacementRoles = ["Base", "Small", "Swatch", "Thumbnail"];
+					$flags = true;
+					foreach ($image_detail as &$item) {
+						if (in_array('Base', $item['image_role'])) {
+							$flags = false;
+						}
+					}
                     foreach ($image_detail as &$item) {
-                        if (isset($item['image_role']) && is_array($item['image_role'])) {
+                        if ($flags && isset($item['image_role']) && is_array($item['image_role'])) {
                             $containsPlaceholder = in_array("###\n", $item['image_role']);
                             $hasAllReplacementRoles = empty(array_diff($replacementRoles, $item['image_role']));
                             if ($hasAllReplacementRoles) { break; }
@@ -999,8 +1139,14 @@ class UpdateAllSku
                         }
                     }
 					$replacementRoles = ["Base", "Small", "Swatch", "Thumbnail"];
+					$flags = true;
+					foreach ($image_detail as &$item) {
+						if (in_array('Base', $item['image_role'])) {
+							$flags = false;
+						}
+					}
                     foreach ($image_detail as &$item) {
-                        if (isset($item['image_role']) && is_array($item['image_role'])) {
+                        if ($flags && isset($item['image_role']) && is_array($item['image_role'])) {
                             $containsPlaceholder = in_array("###\n", $item['image_role']);
                             $hasAllReplacementRoles = empty(array_diff($replacementRoles, $item['image_role']));
                             if ($hasAllReplacementRoles) { break; }
@@ -1290,6 +1436,20 @@ class UpdateAllSku
                                     "is_import" => 0,
 									"is_order" => $is_order
                                 ];
+								$total_new_values = count($image_detail);
+                                if ($total_new_values > 1) {
+                                    foreach ($image_detail as $nn => $n_img) {
+                                        if ($n_img['item_type'] == "IMAGE" && $nn != ($total_new_values - 1)) {
+                                            if ($new_magento_role_option_array[$vv] != "###") {
+                                                $new_mg_role_array = (array)$new_magento_role_option_array[$vv];
+                                                if (count($n_img["image_role"])>0 && count($new_mg_role_array)>0) {
+                                                    $result_val=array_diff($n_img["image_role"], $new_mg_role_array);
+                                                    $image_detail[$nn]["image_role"] = $result_val;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                                 if (!in_array($item_url[0], $all_item_url)) {
 									$is_order = isset($isOrder[$vv]) ? $isOrder[$vv] : "";
                                     $diff_image_detail[] = [
@@ -1369,188 +1529,34 @@ class UpdateAllSku
 							}
                         }
                     }
-					$merge_both = array_merge($image_detail, $video_detail);
-                    $merge_both_diff = array_merge($diff_image_detail, $video_detail_diff);
-                    $d_img_roll = "";
-                    $d_media_id = [];
-					$image_dataa = [];
-					$images = [];
-                    if (count($merge_both_diff) > 0) {
-                        foreach ($merge_both_diff as $d_img) {
-                            if($d_img['item_type'] == "IMAGE") {
-                                $d_img_roll = $d_img['image_role'];
-                            }
-                            $d_media_id[] =  $d_img['bynder_md_id'];
-                        }
-						foreach ($merge_both as $img) {
-							if ($img['item_type'] == "IMAGE") {
-								$image_dataa[] = $img;
-								$images[] = $img['item_url'];
-							} else {
-								$video_data[] = $img;
-								$video[] = $img['item_url'];
-							}
+					$replacementRoles = ["Base", "Small", "Swatch", "Thumbnail"];
+					$flags = true;
+					foreach ($image_detail as &$item) {
+						if (in_array('Base', $item['image_role'])) {
+							$flags = false;
 						}
-                        $this->getInsertMedaiDataTable($product_sku_key, $d_media_id, $product_ids, $storeId);
-						$new_image_details = [];
-						$new_image_detail_videos = [];
-						if (is_array($item_old_value)) {
-							foreach ($item_old_value as $img) {
-								if ($img['item_type'] == 'IMAGE') {
-									$item_img_url = $img['item_url'];
-								
-									if (in_array($item_img_url, $images)) {
-										$item_key = array_search($img['item_url'], array_column($image_dataa, "item_url"));
-										$new_image_details[] = [
-											"item_url" => $item_img_url,
-											"alt_text" => $img['alt_text'],
-											"image_role" => $image_detail[$item_key]['image_role'],
-											"item_type" => $img['item_type'],
-											"thum_url" => $img['thum_url'],
-											"bynder_md_id" => $img['bynder_md_id'],
-											"is_import" => $img['is_import'],
-											"is_order" => isset($img['is_order'])? $img['is_order'] : ""
-										];
-									} 
-								} 
-								if ($img['item_type'] == 'VIDEO') {
-									$item_video_url = $img['item_url'];
-									if (in_array($item_video_url, $video)) {
-										$new_image_detail_videos[] = [
-											"item_url" => $img['item_url'],
-											"image_role" => $img['image_role'],
-											"item_type" => $img['item_type'],
-											"thum_url" => $img['thum_url'],
-											"bynder_md_id" => $img['bynder_md_id'],
-											"is_order" => isset($img['is_order'])? $img['is_order'] : ""
-										];
-									}
-								}
-							}
-						}
-						
-						if (!empty($new_image_details) && !empty($new_image_detail_videos)) {
-							$new_data = array_merge($new_image_details, $new_image_detail_videos);
-							$array_merge = array_merge($new_data, $merge_both_diff);
-						} else {
-							$array_merge = array_merge($item_old_value, $merge_both_diff);
-						}
-                        
-                    } else {
-                        $new_image_detail = [];
-                        $new_image_detail_image = [];
-                        $new_image_detail_video = [];
-                        $image = [];
-                        $video = [];
-                        $image_data = [];
-                        $video_data = [];
-                        if (count($merge_both) > 0) {
-                            foreach ($merge_both as $img) {
-                                if ($img['item_type'] == "IMAGE") {
-                                    $image_data[] = $img; // Store the full data
-                                    $image[] = $img['item_url'];
-                                } else {
-                                    $video_data[] = $img; // Store the full data
-                                    $video[] = $img['item_url'];
-                                }
-                            }
-                            if (is_array($item_old_value)) {
-                                if (is_array($all_video_url) && count($all_video_url) == 0 && count($all_item_url) > 0) {
-                                    foreach ($item_old_value as $img) {
-                                        if ($img['item_type'] == 'IMAGE') {
-                                            $item_img_url = $img['item_url'];
-                                        }
-                                        if (in_array($item_img_url, $image)) {
-                                            $item_key = array_search($img['item_url'], array_column($image_data, "item_url"));
-											if (isset($d_img_roll)) {
-												$roll = $image_detail[$item_key]['image_role'];
-											} else {
-												$roll = $img['image_role'];
-											}
-                                            $new_image_detail[] = [
-                                                "item_url" => $item_img_url,
-                                                "alt_text" => $img['alt_text'],
-                                                "image_role" => $roll,
-                                                "item_type" => $img['item_type'],
-                                                "thum_url" => $img['thum_url'],
-                                                "bynder_md_id" => $img['bynder_md_id'],
-                                                "is_import" => $img['is_import'],
-												"is_order" => isset($img['is_order'])? $img['is_order'] : ""
-                                            ];
-                                        }
-                                    }
-                                    if(!empty($new_image_detail)) {
-                                        $array_merge = array_merge($new_image_detail, $video_data);
-                                    } else {
-                                        $array_merge = array_merge($item_old_value, $video_data);
-                                    }
-                                } elseif (count($all_video_url) > 0 && count($all_item_url) == 0) {
-                                    foreach ($item_old_value as $img) {
-                                        if ($img['item_type'] == 'VIDEO') {
-                                            $item_video_url = $img['item_url'];
-                                        }
-                                        if (in_array($item_video_url, $video)) {
-                                            $new_image_detail_video[] = [
-                                                "item_url" => $item_video_url,
-                                                "image_role" => $img['image_role'],
-                                                "item_type" => $img['item_type'],
-                                                "thum_url" => $img['thum_url'],
-                                                "bynder_md_id" => $img['bynder_md_id'],
-												"is_order" => isset($img['is_order'])? $img['is_order'] : ""
-                                            ];
-                                        }
-                                    }
-                                    if(!empty($new_image_detail_video)) {
-                                        $array_merge = array_merge($new_image_detail_video, $image_data);
-                                    } else {
-                                        $array_merge = array_merge($item_old_value, $image_data);
-                                    }
-                                } elseif (count($all_video_url) > 0 && count($all_item_url) > 0) {
-                                    foreach ($item_old_value as $img) {
-                                        if ($img['item_type'] == 'IMAGE') {
-                                            $item_img_url = $img['item_url'];
-                                            if (in_array($item_img_url, $image)) {
-                                                $item_key = array_search($img['item_url'], array_column($image_data, "item_url"));
-                                                if (isset($d_img_roll)) {
-													$roll = $image_detail[$item_key]['image_role'];
-												} else {
-													$roll = $img['image_role'];
-												}
-                                                $new_image_detail_image[] = [
-                                                    "item_url" => $item_img_url,
-                                                    "alt_text" => $img['alt_text'],
-                                                    "image_role" => $roll,
-                                                    "item_type" => $img['item_type'],
-                                                    "thum_url" => $img['thum_url'],
-                                                    "bynder_md_id" => $img['bynder_md_id'],
-                                                    "is_import" => $img['is_import'],
-													"is_order" => isset($img['is_order'])? $img['is_order'] : ""
-                                                ];
-                                            }
-                                        }
-										if ($img['item_type'] == 'VIDEO') {
-                                            $item_video_url = $img['item_url'];
-                                            if (in_array($item_video_url, $video)) {
-                                                $new_image_detail_video[] = [
-                                                    "item_url" => $img['item_url'],
-                                                    "image_role" => $img['image_role'],
-                                                    "item_type" => $img['item_type'],
-                                                    "thum_url" => $img['thum_url'],
-                                                    "bynder_md_id" => $img['bynder_md_id'],
-													"is_order" => isset($img['is_order'])? $img['is_order'] : ""
-                                                ];
-                                            }
-                                        }
-                                    }
-                                    if (!empty($new_image_detail_image) && !empty($new_image_detail_video)) {
-                                        $array_merge = array_merge($new_image_detail_image, $new_image_detail_video);
-                                    } else {
-                                        $array_merge = array_merge($item_old_value, $merge_both);
-                                    }
-                                }
+					}
+                    foreach ($image_detail as &$item) {
+                        if ($flags && isset($item['image_role']) && is_array($item['image_role'])) {
+                            $containsPlaceholder = in_array("###\n", $item['image_role']);
+                            $hasAllReplacementRoles = empty(array_diff($replacementRoles, $item['image_role']));
+                            if ($hasAllReplacementRoles) { break; }
+                            if ($containsPlaceholder && !$hasAllReplacementRoles) {
+                                $item['image_role'] = $replacementRoles;
                             }
                         }
                     }
+					foreach ($image_detail as &$items) {
+						if (isset($items['image_role']) && is_array($items['image_role'])) {
+							// Clean out "###" from image_role
+							$items['image_role'] = array_values(array_filter(
+								$items['image_role'],
+								fn($role) => trim($role) !== '###'
+							));
+						}
+					}
+					unset($items);
+					$array_merge = array_merge($image_detail, $video_detail);
                     $m_id = [];
                     foreach ($array_merge as $img) {
                         $type[] = $img['item_type'];
@@ -1656,6 +1662,33 @@ class UpdateAllSku
                             
                         }
                     }
+					$replacementRoles = ["Base", "Small", "Swatch", "Thumbnail"];
+					$flags = true;
+					foreach ($image_detail as &$item) {
+						if (in_array('Base', $item['image_role'])) {
+							$flags = false;
+						}
+					}
+                    foreach ($image_detail as &$item) {
+                        if ($flags && isset($item['image_role']) && is_array($item['image_role'])) {
+                            $containsPlaceholder = in_array("###\n", $item['image_role']);
+                            $hasAllReplacementRoles = empty(array_diff($replacementRoles, $item['image_role']));
+                            if ($hasAllReplacementRoles) { break; }
+                            if ($containsPlaceholder && !$hasAllReplacementRoles) {
+                                $item['image_role'] = $replacementRoles;
+                            }
+                        }
+                    }
+					foreach ($image_detail as &$items) {
+						if (isset($items['image_role']) && is_array($items['image_role'])) {
+							// Clean out "###" from image_role
+							$items['image_role'] = array_values(array_filter(
+								$items['image_role'],
+								fn($role) => trim($role) !== '###'
+							));
+						}
+					}
+					unset($items);
                     $media_id = [];
                     $image = [];
 					$type = [];

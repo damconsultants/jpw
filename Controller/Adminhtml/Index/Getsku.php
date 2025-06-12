@@ -139,7 +139,30 @@ class Getsku extends \Magento\Backend\App\Action
                 foreach ($productcollection as $product) {
                     $product_sku[] = $product->getSku();
                 }
-            }
+            } elseif ($attribute_value == "all_attribute") {
+				// Filter products by 'attribute_set_id' with $image_id
+				$productcollection->addAttributeToFilter('attribute_set_id', $image_id);
+
+				foreach ($productcollection as $product) {
+					// Check for 'bynder_multi_img' and filter based on 'bynder_isMain'
+					if (!empty($product['bynder_multi_img'])) {
+						if ($product['bynder_isMain'] != '1') {
+							$product_sku[] = $product->getSku();
+						}
+					} else {
+						$product_sku[] = $product->getSku();
+					}
+				}
+
+				// Add additional filter for 'attribute_set_id' with $doc_id and 'bynder_document' being null
+				$productcollection->clear()
+					->addAttributeToFilter('attribute_set_id', $doc_id)
+					->addAttributeToFilter('bynder_document', ['null' => true]);
+
+				foreach ($productcollection as $product) {
+					$product_sku[] = $product->getSku();
+				}
+			}
         } else {
 
             $productcollection->addAttributeToFilter('attribute_set_id', $ids)

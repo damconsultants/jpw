@@ -402,8 +402,10 @@ class FeatchNullDataToMagento
                             $new_bynder_mediaid_text[] = $bynder_media_id;
 							$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
 							if(isset($data_value[$magento_order_slug])) {
-								foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
-									$is_order[] = $property_Magento_Media_Order . "\n";
+								if(count($data_value[$magento_order_slug]) > 0) {
+									foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
+										$is_order[] = $property_Magento_Media_Order . "\n";
+									}
 								}
 							}
                         } else {
@@ -418,8 +420,10 @@ class FeatchNullDataToMagento
                             $new_bynder_mediaid_text[] = $bynder_media_id."\n";
 							$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
 							if(isset($data_value[$magento_order_slug])) {
-								foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
-									$is_order[] = $property_Magento_Media_Order . "\n";
+								if(count($data_value[$magento_order_slug]) > 0) {
+									foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
+										$is_order[] = $property_Magento_Media_Order . "\n";
+									}
 								}
 							}
                         }
@@ -438,12 +442,15 @@ class FeatchNullDataToMagento
                     $new_bynder_mediaid_text[] = $bynder_media_id."\n";
 					$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
 					if(isset($data_value[$magento_order_slug])) {
-						foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
-							$is_order[] = $property_Magento_Media_Order . "\n";
+						if(count($data_value[$magento_order_slug]) > 0) {
+							foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
+								$is_order[] = $property_Magento_Media_Order . "\n";
+							}
 						}
 					}
                 }
 				$new_bynder_mediaid_text = array_unique($new_bynder_mediaid_text);
+				$new_bynder_alt_text = array_unique($new_bynder_alt_text);
                 if ($data_value['type'] == "image") {
                     $image_link = isset($data_value['derivatives'][0]['public_url']) ? $data_value['derivatives'][0]['public_url'] : $data_value['derivatives'][1]['public_url'];
                     array_push($data_arr, $data_sku[0]);
@@ -638,8 +645,14 @@ class FeatchNullDataToMagento
                         }
                     }
                     $replacementRoles = ["Base", "Small", "Swatch", "Thumbnail"];
+					$flags = true;
+					foreach ($image_detail as &$item) {
+						if (in_array('Base', $item['image_role'])) {
+							$flags = false;
+						}
+					}
                     foreach ($image_detail as &$item) {
-                        if (isset($item['image_role']) && is_array($item['image_role'])) {
+                        if ($flags && isset($item['image_role']) && is_array($item['image_role'])) {
                             $containsPlaceholder = in_array("###\n", $item['image_role']);
                             $hasAllReplacementRoles = empty(array_diff($replacementRoles, $item['image_role']));
                             if ($hasAllReplacementRoles) { break; }
