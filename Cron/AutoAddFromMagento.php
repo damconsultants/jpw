@@ -438,7 +438,7 @@ class AutoAddFromMagento
                             } else {
                                 $new_bynder_alt_text[] = "###\n";
                             }
-                            $new_bynder_mediaid_text[] = $bynder_media_id."\n";
+                            $new_bynder_mediaid_text[] = $bynder_media_id;
 							$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
 							if(isset($data_value[$magento_order_slug])) {
 								if(count($data_value[$magento_order_slug]) > 0) {
@@ -460,7 +460,7 @@ class AutoAddFromMagento
                     } else {
                         $new_bynder_alt_text[] = "###\n";
                     }
-                    $new_bynder_mediaid_text[] = $bynder_media_id."\n";
+                    $new_bynder_mediaid_text[] = $bynder_media_id;
 					$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
 					if(isset($data_value[$magento_order_slug])) {
 						if(count($data_value[$magento_order_slug]) > 0) {
@@ -505,18 +505,23 @@ class AutoAddFromMagento
                     } else {
                         $doc_name = $data_value["name"];
                         $doc_name_with_space = preg_replace("/[^a-zA-Z]+/", "-", $doc_name);
-                        $doc_link = $image_data["image_link"] . '@@' . $doc_name_with_space;
-                        array_push($data_arr, $data_sku[0]);
-                        $data_p = [
-                            "sku" => $data_sku[0],
-                            "url" => [$doc_link. "\n"],
-                            'magento_image_role' => $new_image_role,
-                            'image_alt_text' => $new_bynder_alt_text,
-                            'bynder_media_id_new' => $new_bynder_mediaid_text,
-                            "type" => "document",
-							'is_order' => $is_order
-                        ];
-                        array_push($data_val_arr, $data_p);
+                        $doc_link = "";
+						if(isset($data_value['derivatives'][0]['public_url'])) {
+							$doc_link = $data_value['derivatives'][0]['public_url'] . '??' . $doc_name. "\n";
+						}
+                        if (!empty($doc_link)) {
+							array_push($data_arr, $data_sku[0]);
+							$data_p = [
+								"sku" => $data_sku[0],
+								"url" => [$doc_link],
+								'magento_image_role' => $new_image_role,
+								'image_alt_text' => $new_bynder_alt_text,
+								'bynder_media_id_new' => $new_bynder_mediaid_text,
+								"type" => "document",
+								'is_order' => $is_order
+							];
+							array_push($data_val_arr, $data_p);
+						}
                     }
 
                 }
@@ -542,14 +547,16 @@ class AutoAddFromMagento
         $image_value_details_role = [];
         $temp_arr = [];
 		$byn_is_order = [];
+		$types = [];
         foreach ($data_arr as $key => $skus) {
             $temp_arr[$skus][] =  implode("", $data_val_arr[$key]["url"]);
             $image_value_details_role[$skus][] = $data_val_arr[$key]["magento_image_role"];
             $image_alt_text[$skus][] = implode("", $data_val_arr[$key]["image_alt_text"]);
             $byn_md_id_new[$skus][] = implode("", $data_val_arr[$key]["bynder_media_id_new"]);
-            $types = $data_val_arr[$key]['type'];
+            $types[] = $data_val_arr[$key]['type'];
 			$byn_is_order[$skus][] = implode("", $data_val_arr[$key]["is_order"]);
         }
+		$types = array_unique($types);
         foreach ($temp_arr as $product_sku_key => $image_value) {
             $img_json = implode("", $image_value);
             $mg_role = $image_value_details_role[$product_sku_key];
@@ -576,7 +583,7 @@ class AutoAddFromMagento
      * @param string $mg_img_role_option
      * @param string $img_alt_text
      * @param string $bynder_media_id
-     * @param string $type
+     * @param array $type
      */
     public function getUpdateImage($img_json, $product_sku_key, $mg_img_role_option, $img_alt_text, $bynder_media_id, $type, $byd_media_is_order)
     {
@@ -604,7 +611,7 @@ class AutoAddFromMagento
             $auto_replace = $_product->getBynderAutoReplace();
             $bynder_media_ids = $bynder_media_id[$product_sku_key];
 			$isOrder = explode("\n", $byd_media_is_order);
-            if ($type == "image" || $type == "video") {
+            if (in_array("image", $type) || in_array("video", $type)) {
                 if (!empty($image_value) && $auto_replace == null) {
                     $new_image_array = explode("\n", $img_json);
                     
@@ -638,7 +645,8 @@ class AutoAddFromMagento
                                 $curt_img_role = $new_magento_role_option_array[$vv];
                             }
                             $find_video = strpos($new_image_value, "@@");
-                            if (!$find_video) {
+							$find_doc = strpos($new_image_value, "??");
+                            if (!$find_video && !$find_doc) {
                                 $logger->info("image_detail => ". $new_image_value);
 								$is_order = isset($isOrder[$vv]) ? $isOrder[$vv] : "";
                                 $image_detail[] = [
@@ -714,7 +722,7 @@ class AutoAddFromMagento
                                         }
                                     }
                                 }
-                            } else {
+                            } elseif($find_video) {
                                 $item_url = explode("?", $new_image_value);
                                 $thum_url = explode("@@", $new_image_value);
                                 $media_video_explode = explode("/", $item_url[0]);
@@ -894,7 +902,8 @@ class AutoAddFromMagento
                         $storeId
                     );
                 } 
-            } else {
+            } 
+			if (in_array("document", $type)) {
                 if (!empty($doc_values)) {
                     $item_old_value = json_decode($doc_values, true);
                     if (is_array($item_old_value)) {
@@ -910,14 +919,15 @@ class AutoAddFromMagento
                     $new_doc_array = explode("\n", $img_json);
                     $doc_detail = [];
                     foreach ($new_doc_array as $vv => $doc_value) {
-                        if(!empty($doc_value)){
-                            $item_url = explode("?", $doc_value);
-                            $doc_name = explode("@@", $doc_value);
-                            $media_doc_explode = explode("/", $item_url[0]);
-							$is_order = isset($isOrder[$vv]) ? $isOrder[$vv] : "";
-							if(isset($doc_name[1]) && isset($bynder_media_id[$vv])){
+						$find_doc = strpos($doc_value, "??");
+						if ($find_doc) {
+							if(!empty($doc_value)){
+								$item_url = explode("??", $doc_value);
+								$doc_name = explode("??", $doc_value);
+								$media_doc_explode = explode("/", $item_url[0]);
 								$is_order = isset($isOrder[$vv]) ? $isOrder[$vv] : "";
-								if(!in_array($bynder_media_ids[$vv], $b_id)) {
+								if(isset($doc_name[1]) && isset($bynder_media_ids[$vv])){
+									$is_order = isset($isOrder[$vv]) ? $isOrder[$vv] : "";
 									$doc_detail[] = [
 										"item_url" => $item_url[0],
 										"item_type" => 'DOCUMENT',
@@ -934,11 +944,11 @@ class AutoAddFromMagento
 									];
 									$this->getInsertDataTable($data_doc_value);
 								}
-                            }
-                        }
+							}
+						}
                     }
-                    $array_merg = array_merge($item_old_value, $doc_detail);
-                    $new_value_array = json_encode($array_merg, true);
+                    //$array_merg = array_merge($item_old_value, $doc_detail);
+                    $new_value_array = json_encode($doc_detail, true);
                     $this->action->updateAttributes(
                         [$product_ids],
                         ['bynder_document' => $new_value_array, 'bynder_auto_replace' => 1],

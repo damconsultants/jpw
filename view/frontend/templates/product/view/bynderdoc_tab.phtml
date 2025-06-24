@@ -1,4 +1,5 @@
 <?php
+
 $product = $block->getProduct();
 
 $document_text = $product->getData('bynder_document');
@@ -9,8 +10,8 @@ if (!empty($document_text)) {
     $html = "";
     if (!empty($document_array)) {
         foreach ($document_array as $doc) {
-            $lable = explode("/", $doc['item_url']);
-            $html .= '<li><a href="' . $doc['item_url'] . '">' . $lable[6] . '</a></li>';
+            //$lable = explode("/", $doc['item_url']);
+            $html .= '<li><a href="' . $doc['item_url'] . '" target="_blank">' . $doc['doc_name'] . '</a></li>';
         }
     }
     ?>

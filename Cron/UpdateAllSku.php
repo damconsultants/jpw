@@ -439,7 +439,7 @@ class UpdateAllSku
 								} else {
 									$new_bynder_alt_text[] = "###\n";
 								}
-								$new_bynder_mediaid_text[] = $bynder_media_id."\n";
+								$new_bynder_mediaid_text[] = $bynder_media_id;
 								$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
 								if(isset($data_value[$magento_order_slug])) {
 									if(count($data_value[$magento_order_slug]) > 0) {
@@ -461,7 +461,7 @@ class UpdateAllSku
 						} else {
 							$new_bynder_alt_text[] = "###\n";
 						}
-						$new_bynder_mediaid_text[] = $bynder_media_id."\n";
+						$new_bynder_mediaid_text[] = $bynder_media_id;
 						$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
 						if(isset($data_value[$magento_order_slug])) {
 							if(count($data_value[$magento_order_slug]) > 0) {
@@ -504,17 +504,22 @@ class UpdateAllSku
 						} else {
 							$doc_name = $data_value["name"];
 							$doc_name_with_space = preg_replace("/[^a-zA-Z]+/", "-", $doc_name);
-							$doc_link = $image_data["image_link"] . '@@' . $doc_name_with_space. "\n";
-							array_push($data_arr, $data_sku[0]);
-							$data_p = [
-								"sku" => $data_sku[0],
-								"url" => [$doc_link],
-								'magento_image_role' => $new_image_role,
-								'image_alt_text' => $new_bynder_alt_text,
-								'bynder_media_id_new' => $new_bynder_mediaid_text,
-								'is_order' => $is_order
-							];
-							array_push($data_val_arr, $data_p);
+							$doc_link = "";
+							if(isset($data_value['derivatives'][0]['public_url'])) {
+								$doc_link = $data_value['derivatives'][0]['public_url'] . '@@' . $doc_name. "\n";
+							}
+							if (!empty($doc_link)) {
+								array_push($data_arr, $data_sku[0]);
+								$data_p = [
+									"sku" => $data_sku[0],
+									"url" => [$doc_link],
+									'magento_image_role' => $new_image_role,
+									'image_alt_text' => $new_bynder_alt_text,
+									'bynder_media_id_new' => $new_bynder_mediaid_text,
+									'is_order' => $is_order
+								];
+								array_push($data_val_arr, $data_p);
+							}
 						}
 					}
 				} elseif($select_attribute == 'all_attribute') {
@@ -566,7 +571,7 @@ class UpdateAllSku
 								} else {
 									$new_bynder_alt_text[] = "###\n";
 								}
-								$new_bynder_mediaid_text[] = $bynder_media_id."\n";
+								$new_bynder_mediaid_text[] = $bynder_media_id;
 								$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
 								if(isset($data_value[$magento_order_slug])) {
 									if(count($data_value[$magento_order_slug]) > 0) {
@@ -588,7 +593,7 @@ class UpdateAllSku
 						} else {
 							$new_bynder_alt_text[] = "###\n";
 						}
-						$new_bynder_mediaid_text[] = $bynder_media_id."\n";
+						$new_bynder_mediaid_text[] = $bynder_media_id;
 						$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
 						if(isset($data_value[$magento_order_slug])) {
 							if(count($data_value[$magento_order_slug]) > 0) {
@@ -631,17 +636,22 @@ class UpdateAllSku
                         } else {
                             $doc_name = $data_value["name"];
                             $doc_name_with_space = preg_replace("/[^a-zA-Z]+/", "-", $doc_name);
-                            $doc_link = $image_data["image_link"] . '@@' . $doc_name_with_space;
-                            array_push($doc_data_arr, $data_sku[0]);
-                            $data_p = [
-								"sku" => $data_sku[0],
-								"url" => [$doc_link. "\n"],
-								'magento_image_role' => $new_image_role,
-                                'image_alt_text' => $new_bynder_alt_text,
-                                'bynder_media_id_new' => $new_bynder_mediaid_text,
-								'is_order' => $is_order
-							];
-                            array_push($doc_data, $data_p);
+							$doc_link = "";
+							if(isset($data_value['derivatives'][0]['public_url'])) {
+								$doc_link = $data_value['derivatives'][0]['public_url'] . '@@' . $doc_name. "\n";
+							}
+							if (!empty($doc_link)) {
+								array_push($doc_data_arr, $data_sku[0]);
+								$data_p = [
+									"sku" => $data_sku[0],
+									"url" => [$doc_link],
+									'magento_image_role' => $new_image_role,
+									'image_alt_text' => $new_bynder_alt_text,
+									'bynder_media_id_new' => $new_bynder_mediaid_text,
+									'is_order' => $is_order
+								];
+								array_push($doc_data, $data_p);
+							}
                         }
 					}
 				}
@@ -759,28 +769,30 @@ class UpdateAllSku
             $bynder_media_id = $bynder_media_ids[$product_sku_key];
 			$isOrder = explode("\n", $byd_media_is_order);
 			if (empty($doc_values)) {
-				$new_doc_array = explode(" \n", $img_json);
+				$new_doc_array = explode("\n", $img_json);
 				$doc_detail = [];
 				foreach ($new_doc_array as $vv => $doc_value) {
 					//$item_url = explode("?", $doc_value);
 					$doc_name = explode("@@", $doc_value);
 					$media_doc_explode = explode("/", $doc_name[0]);
 					$is_order = isset($isOrder[$vv]) ? $isOrder[$vv] : "";
-					$doc_detail[] = [
-						"item_url" => $doc_name[0],
-						"item_type" => 'DOCUMENT',
-						"doc_name" => $doc_name[1],
-						"bynder_md_id" => $bynder_media_id[$vv],
-						"is_order" => $is_order
-					];
-					$data_doc_value = [
-						'sku' => $product_sku_key,
-						'message' => $doc_name[0],
-						'data_type' => '2',
-						'media_id' => $bynder_media_id[$vv],
-						'lable' => 1
-					];
-					$this->getInsertDataTable($data_doc_value);
+					if(isset($doc_name[1]) && isset($bynder_media_id[$vv])){
+						$doc_detail[] = [
+							"item_url" => $doc_name[0],
+							"item_type" => 'DOCUMENT',
+							"doc_name" => $doc_name[1],
+							"bynder_md_id" => $bynder_media_id[$vv],
+							"is_order" => $is_order
+						];
+						$data_doc_value = [
+							'sku' => $product_sku_key,
+							'message' => $doc_name[0],
+							'data_type' => '2',
+							'media_id' => $bynder_media_id[$vv],
+							'lable' => 1
+						];
+						$this->getInsertDataTable($data_doc_value);
+					}
 				}
 				$new_value_array = json_encode($doc_detail, true);
 				
@@ -805,11 +817,12 @@ class UpdateAllSku
 				$doc_detail = [];
 				foreach ($new_doc_array as $vv => $doc_value) {
 					if(!empty($doc_value)){
-						$item_url = explode("?", $doc_value);
+						$item_url = explode("@@", $doc_value);
 						$doc_name = explode("@@", $doc_value);
 						$media_doc_explode = explode("/", $item_url[0]);
 						$is_order = isset($isOrder[$vv]) ? $isOrder[$vv] : "";
-						if(!in_array($bynder_media_id[$vv], $b_id)) {
+						if(isset($doc_name[1]) && isset($bynder_media_id[$vv])){
+						//if(!in_array($bynder_media_id[$vv], $b_id)) {
 							$doc_detail[] = [
 								"item_url" => $doc_name[0],
 								"item_type" => 'DOCUMENT',
@@ -825,12 +838,13 @@ class UpdateAllSku
 								'lable' => 1
 							];
 							$this->getInsertDataTable($data_doc_value);
+						//}
 						}
 						
 					}
 				}
-				$array_merg = array_merge($item_old_value, $doc_detail);
-				$new_value_array = json_encode($array_merg, true);
+				//$array_merg = array_merge($item_old_value, $doc_detail);
+				$new_value_array = json_encode($doc_detail, true);
 				$this->productAction->updateAttributes(
 					[$product_ids],
 					['bynder_document' => $new_value_array],
@@ -1315,7 +1329,7 @@ class UpdateAllSku
                     $new_doc_array = explode("\n", $img_json);
                     $doc_detail = [];
                     foreach ($new_doc_array as $vv => $doc_value) {
-                        $item_url = explode("?", $doc_value);
+                        $item_url = explode("@@", $doc_value);
 						$doc_name = explode("@@", $doc_value);
                         $media_doc_explode = explode("/", $item_url[0]);
 						$is_order = isset($isOrder[$vv]) ? $isOrder[$vv] : "";
@@ -1342,7 +1356,7 @@ class UpdateAllSku
                         $storeId
                     );
                 } else {
-                    $item_old_value = json_decode($doc_values, true);
+                    $item_old_value = json_decode($doc_value, true);
                     if (is_array($item_old_value)) {
                         if (count($item_old_value) > 0) {
                             foreach ($item_old_value as $doc) {
@@ -1356,14 +1370,14 @@ class UpdateAllSku
                     $new_doc_array = explode("\n", $img_json);
                     $bynder_media_id = $bynder_media_ids[$product_sku_key];
                     $doc_detail = [];
-                    foreach ($new_doc_array as $vv => $doc_value) {
-                        if(!empty($doc_value)){
-                            $item_url = explode("?", $doc_value);
-                            $doc_name = explode("@@", $doc_value);
+                    foreach ($new_doc_array as $vv => $doc_values) {
+                        if(!empty($doc_values)){
+                            $item_url = explode("@@", $doc_values);
+                            $doc_name = explode("@@", $doc_values);
                             $media_doc_explode = explode("/", $item_url[0]);
 							if(isset($doc_name[1]) && isset($bynder_media_id[$vv])){
 								$is_order = isset($isOrder[$vv]) ? $isOrder[$vv] : "";
-								if(!in_array($bynder_media_id[$vv], $b_id)) {
+								//if(!in_array($bynder_media_id[$vv], $b_id)) {
 									$doc_detail[] = [
 										"item_url" => $item_url[0],
 										"item_type" => 'DOCUMENT',
@@ -1379,13 +1393,13 @@ class UpdateAllSku
 										'lable' => 1
 									];
 									$this->getInsertDataTable($data_doc_value);
-								}
+								//}
 							}
                             
                         }
                     }
-                    $array_merg = array_merge($item_old_value, $doc_detail);
-                    $new_value_array = json_encode($array_merg, true);
+                    //$array_merg = array_merge($item_old_value, $doc_detail);
+                    $new_value_array = json_encode($doc_detail, true);
                     $this->productAction->updateAttributes(
                         [$product_ids],
                         ['bynder_document' => $new_value_array],
