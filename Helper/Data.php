@@ -583,7 +583,6 @@ class Data extends AbstractHelper
             'permanent_token' => $this->getPermanenToken(),
             'licence_token' => $this->getLicenceToken()
         ];
-        //echo "<pre>"; print_r($fields); exit;
         $jsonData = '{}';
         $fields = json_encode($fields);
         $this->_curl->setOption(CURLOPT_URL, self::API_CALLED . 'jpw-get-bynder-meta-properites');

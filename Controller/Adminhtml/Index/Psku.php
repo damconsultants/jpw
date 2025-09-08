@@ -146,9 +146,30 @@ class Psku extends \Magento\Backend\App\Action
             if (count($productSku) > 0) {
                 foreach ($productSku as $sku) {
                     if ($sku != "") {
+                        try {
+                            $product_id = $this->product->getIdBySku($sku);
+                            if (!$product_id) {
+                                $insert_data = [
+                                    "sku" => $sku,
+                                    "message" => "SKU not found in products",
+                                    "data_type" => "",
+                                    "lable" => "0"
+                                ];
+                                $this->getInsertDataTable($insert_data);
+                                continue;
+                            }
+                        } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
+                            $insert_data = [
+                                "sku" => $sku,
+                                "message" => "SKU not match in products",
+                                "data_type" => "",
+                                "lable" => "0"
+                            ];
+                            $this->getInsertDataTable($insert_data);
+                            continue;
+                        }
                         $bd_sku = trim(preg_replace('/[^A-Za-z0-9-]/', '_', $sku));
                         $get_data = $this->datahelper->getImageSyncWithProperties($bd_sku, $property_id, $collection_value);
-						//echo "<pre>"; print_r($get_data); exit;
                         $getIsJson = $this->getIsJSON($get_data);
                         if (!empty($get_data) && $getIsJson) {
                             $respon_array = json_decode($get_data, true);
@@ -363,7 +384,6 @@ class Psku extends \Magento\Backend\App\Action
 		$doc_data_arr = [];
 		$doc_data = [];
         $result = $this->resultJsonFactory->create();
-		//echo "<pre>"; print_r($convert_array); exit;
         if ($convert_array['status'] == 1) {
             foreach ($convert_array['data'] as $k => $data_value) {
                 
@@ -403,7 +423,6 @@ class Psku extends \Magento\Backend\App\Action
                                 /*$new_bynder_alt_text[] = (strlen($alt_text_vl) > 0)?$alt_text_vl."\n":"###\n";*/
                                 $new_bynder_mediaid_text[] = $bynder_media_id;
 								$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
-								//echo "<pre>"; print_r($magento_order_slug); exit;
 								if(isset($data_value[$magento_order_slug])) {
 									if(count($data_value[$magento_order_slug]) > 0) {
 										foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
@@ -422,7 +441,6 @@ class Psku extends \Magento\Backend\App\Action
 								}
 								$new_bynder_mediaid_text[] = $bynder_media_id;
 								$magento_order_slug = $collection_data_slug_val['image_order']['bynder_property_slug'];
-								//echo "<pre>"; print_r($magento_order_slug); exit;
 								if(isset($data_value[$magento_order_slug])) {
 									if(count($data_value[$magento_order_slug]) > 0) {
 										foreach ($data_value[$magento_order_slug]  as $property_Magento_Media_Order) {
@@ -697,7 +715,6 @@ class Psku extends \Magento\Backend\App\Action
      */
     public function getProcessItemDoc($data_arr, $data_val_arr)
     {
-		//echo "<pre>"; print_r($data_val_arr); exit;
         $result = $this->resultJsonFactory->create();
         $image_value_details_role = [];
         $temp_arr = [];
@@ -857,13 +874,12 @@ class Psku extends \Magento\Backend\App\Action
         $diff_image_detail = [];
         try {
             $storeId = $this->storeManagerInterface->getStore()->getId();
-            $_product = $this->_productRepository->get($product_sku_key);
+			$_product = $this->_productRepository->get($product_sku_key);
             $product_ids = $_product->getId();
             $image_value = $_product->getBynderMultiImg();
             $doc_value = $_product->getBynderDocument();
             $bynder_media_id = $bynder_media_ids[$product_sku_key];
 			$isOrder = explode("\n", $byd_media_is_order);
-			//echo "<pre>"; print_r($select_attribute); exit;
             if ($select_attribute == "image") {
                 if (!empty($image_value)) {
                     $new_image_array = explode("\n", $img_json);
@@ -1358,7 +1374,6 @@ class Psku extends \Magento\Backend\App\Action
                         }
                     }
                     $new_doc_array = explode("\n", $img_json);
-					//echo "<pre>"; print_r($new_doc_array); exit;
                     $bynder_media_id = $bynder_media_ids[$product_sku_key];
                     $doc_detail = [];
                     foreach ($new_doc_array as $vv => $doc_values) {

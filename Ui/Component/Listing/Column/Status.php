@@ -76,7 +76,6 @@ class Status extends \Magento\Ui\Component\Listing\Columns\Column
                         $button_style .= __('Pending');
                     $button_style .= '</span>';
                     $item['status'] = $button_style;
-					//echo "<pre>"; print_r($item); exit;
                 }
             }
         }

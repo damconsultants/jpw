@@ -65,9 +65,11 @@ class Pallsku extends Action implements HttpPostActionInterface
                         ]);
                     }
                 }
-            }
-
-            return $result->setData(['status' => 1, 'message' => 'SKUs added to queue Please Copy This '. $numericToken. ' Token' ]);
+				return $result->setData(['status' => 1, 'message' => 'SKUs added to queue Please Copy This '. $numericToken. ' Token' ]);
+            } else {
+				$result_data = $result->setData(['status' => 0, 'message' => 'Please enter atleast 21 or more SKUs.']);
+				return $result_data;
+			}
         } catch (\Exception $e) {
             return $result->setData(['success' => 0, 'message' => $e->getMessage()]);
         }

@@ -123,7 +123,6 @@ class Index extends \Magento\Framework\App\Action\Action
         }
 
         $json_data = json_encode($res_array);
-        //echo "<pre>"; print_r($res_array); exit;
         return $this->getResponse()->setBody($json_data);
     }
     /**

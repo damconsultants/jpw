@@ -85,10 +85,6 @@ class Index extends \Magento\Backend\Block\Template
         $attribute_array = [];
         $defaultmetaPropertycollection = $this->_default_metaProperty_collection->create();
         $defaultmetaPropertycollection_data = $defaultmetaPropertycollection->getData();
-        /* echo '<pre>';
-        print_r($defaultmetaPropertycollection_data);
-        echo '</pre>';
-        exit; */
         if (count($defaultmetaPropertycollection_data) > 0) {
             foreach ($defaultmetaPropertycollection_data as $meta_val) {
                 $attribute_array[$meta_val['bynder_property_slug']] = $meta_val['property_name'];
@@ -135,7 +131,6 @@ class Index extends \Magento\Backend\Block\Template
             $response_data['image_alt_text'] = '0';
 			$response_data['image_order'] =  '0';
         }
-        //echo "<pre>"; print_r($response_data); exit;
         return $response_data;
     }
     /**
