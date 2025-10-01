@@ -452,7 +452,16 @@ class FeatchNullDataToMagento
 				$new_bynder_mediaid_text = array_unique($new_bynder_mediaid_text);
 				$new_bynder_alt_text = array_unique($new_bynder_alt_text);
                 if ($data_value['type'] == "image") {
-                    $image_link = isset($data_value['derivatives'][0]['public_url']) ? $data_value['derivatives'][0]['public_url'] : $data_value['derivatives'][1]['public_url'];
+					$image_link = "";
+					if (!empty($data_value['derivatives']) && is_array($data_value['derivatives'])) {
+						foreach ($data_value['derivatives'] as $derivative) {
+							if (isset($derivative['public_url']) && !empty($derivative['public_url'])) {
+								$image_link = $derivative['public_url'];
+								break; // take the first available public_url
+							}
+						}
+					}
+                    /*$image_link = isset($data_value['derivatives'][0]['public_url']) ? $data_value['derivatives'][0]['public_url'] : $data_value['derivatives'][1]['public_url'];*/
                     array_push($data_arr, $data_sku[0]);
                     $data_p = [
                         "sku" => $data_sku[0],
@@ -483,8 +492,13 @@ class FeatchNullDataToMagento
                         $doc_name = $data_value["name"];
                         $doc_name_with_space = preg_replace("/[^a-zA-Z]+/", "-", $doc_name);
                         $doc_link = "";
-						if(isset($data_value['derivatives'][0]['public_url'])) {
-							$doc_link = $data_value['derivatives'][0]['public_url'] . '??' . $doc_name. "\n";
+						if (!empty($data_value['derivatives']) && is_array($data_value['derivatives'])) {
+							foreach ($data_value['derivatives'] as $derivative) {
+								if (isset($derivative['public_url']) && !empty($derivative['public_url'])) {
+									$doc_link = $derivative['public_url'] . '@@' . $doc_name . "\n";
+									break; // take the first available public_url
+								}
+							}
 						}
                         if (!empty($doc_link)) {
 							array_push($data_arr, $data_sku[0]);

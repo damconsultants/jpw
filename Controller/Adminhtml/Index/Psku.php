@@ -171,6 +171,7 @@ class Psku extends \Magento\Backend\App\Action
                         $bd_sku = trim(preg_replace('/[^A-Za-z0-9-]/', '_', $sku));
                         $get_data = $this->datahelper->getImageSyncWithProperties($bd_sku, $property_id, $collection_value);
                         $getIsJson = $this->getIsJSON($get_data);
+						
                         if (!empty($get_data) && $getIsJson) {
                             $respon_array = json_decode($get_data, true);
                             if ($respon_array['status'] == 1) {
@@ -474,8 +475,16 @@ class Psku extends \Magento\Backend\App\Action
 					$new_bynder_alt_text = array_unique($new_bynder_alt_text);
 					$new_bynder_mediaid_text = array_unique($new_bynder_mediaid_text);
                     if ($data_value['type'] == "image") {
-
-                        $image_link = isset($data_value['derivatives'][0]['public_url']) ? $data_value['derivatives'][0]['public_url'] : $data_value['derivatives'][1]['public_url'];
+						$image_link = "";
+						if (!empty($data_value['derivatives']) && is_array($data_value['derivatives'])) {
+							foreach ($data_value['derivatives'] as $derivative) {
+								if (isset($derivative['public_url']) && !empty($derivative['public_url'])) {
+									$image_link = $derivative['public_url'];
+									break; // take the first available public_url
+								}
+							}
+						}
+                        /*$image_link = isset($data_value['derivatives'][0]['public_url']) ? $data_value['derivatives'][0]['public_url'] : $data_value['derivatives'][1]['public_url'];*/
                         array_push($data_arr, $data_sku[0]);
                         $data_p = [
                             "sku" => $data_sku[0],
@@ -503,12 +512,18 @@ class Psku extends \Magento\Backend\App\Action
                             ];
                             array_push($data_val_arr, $data_p);
                         } else {
+							
                             $new_image_role = [];
                             $doc_name = $data_value["name"];
                             //$doc_name_with_space = preg_replace("/[^a-zA-Z]+/", "-", $doc_name);
 							$doc_link = "";
-							if(isset($data_value['derivatives'][0]['public_url'])) {
-								$doc_link = $data_value['derivatives'][0]['public_url'] . '@@' . $doc_name. "\n";
+							if (!empty($data_value['derivatives']) && is_array($data_value['derivatives'])) {
+								foreach ($data_value['derivatives'] as $derivative) {
+									if (isset($derivative['public_url']) && !empty($derivative['public_url'])) {
+										$doc_link = $derivative['public_url'] . '@@' . $doc_name . "\n";
+										break; // take the first available public_url
+									}
+								}
 							}
 							if (!empty($doc_link)) {
 								array_push($data_arr, $data_sku[0]);
@@ -609,7 +624,16 @@ class Psku extends \Magento\Backend\App\Action
 					$new_bynder_mediaid_text = array_unique($new_bynder_mediaid_text);
 					$new_bynder_alt_text = array_unique($new_bynder_alt_text);
                     if ($data_value['type'] == "image") {
-                        $image_link = isset($data_value['derivatives'][0]['public_url']) ? $data_value['derivatives'][0]['public_url'] : $data_value['derivatives'][1]['public_url'];
+						$image_link = "";
+						if (!empty($data_value['derivatives']) && is_array($data_value['derivatives'])) {
+							foreach ($data_value['derivatives'] as $derivative) {
+								if (isset($derivative['public_url']) && !empty($derivative['public_url'])) {
+									$image_link = $derivative['public_url'];
+									break;
+								}
+							}
+						}
+                        /*$image_link = isset($data_value['derivatives'][0]['public_url']) ? $data_value['derivatives'][0]['public_url'] : $data_value['derivatives'][1]['public_url'];*/
                         array_push($data_arr, $data_sku[0]);
                         $data_p = [
                             "sku" => $data_sku[0],
@@ -640,8 +664,13 @@ class Psku extends \Magento\Backend\App\Action
                             $doc_name = $data_value["name"];
                             //$doc_name_with_space = preg_replace("/[^a-zA-Z]+/", "-", $doc_name);
                             $doc_link = "";
-							if(isset($data_value['derivatives'][0]['public_url'])) {
-								$doc_link = $data_value['derivatives'][0]['public_url'] . '@@' . $doc_name. "\n";
+							if (!empty($data_value['derivatives']) && is_array($data_value['derivatives'])) {
+								foreach ($data_value['derivatives'] as $derivative) {
+									if (isset($derivative['public_url']) && !empty($derivative['public_url'])) {
+										$doc_link = $derivative['public_url'] . '@@' . $doc_name . "\n";
+										break; // take the first available public_url
+									}
+								}
 							}
 							if (!empty($doc_link)) {
 								array_push($doc_data_arr, $data_sku[0]);
