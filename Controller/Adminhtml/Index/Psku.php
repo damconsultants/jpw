@@ -387,7 +387,6 @@ class Psku extends \Magento\Backend\App\Action
         $result = $this->resultJsonFactory->create();
         if ($convert_array['status'] == 1) {
             foreach ($convert_array['data'] as $k => $data_value) {
-                
 				$is_order = array();
 				
                 if ($select_attribute == $data_value['type']) {
@@ -499,7 +498,19 @@ class Psku extends \Magento\Backend\App\Action
                         if ($data_value['type'] == 'video') {
                             $new_image_role = [];
                             /*$video_link = $image_data["image_link"] . '@@' . $image_data["webimage"];*/
-                            $video_link = $image_data['s3_link'] . '@@' . $data_value['derivatives'][0]['original_link'];
+                            $video_link = "";
+                            if (!empty($data_value['derivatives']) && is_array($data_value['derivatives'])) {
+                                foreach ($data_value['derivatives'] as $derivative) {
+                                    if (isset($derivative['public_url']) && !empty($derivative['public_url'])) {
+                                        $video_link = $derivative['public_url'] . '@@' . $derivative['main_link'];
+                                        break; // take the first available public_url
+                                    } else {
+                                        $video_link = $derivative['s3_link'] . '@@' . $derivative['main_link'];
+                                    }
+
+                                }
+                            }
+                            // $video_link = $image_data['s3_link'] . '@@' . $data_value['derivatives'][0]['original_link'];
                             array_push($data_arr, $data_sku[0]);
                             $data_p = [
                                 "sku" => $data_sku[0],
@@ -647,7 +658,19 @@ class Psku extends \Magento\Backend\App\Action
                     } else {
                         if ($data_value['type'] == 'video') {
                             /*$video_link = $image_data["image_link"] . '@@' . $image_data["webimage"];*/
-                            $video_link = $image_data['s3_link'] . '@@' . $data_value['derivatives'][0]['original_link'];
+                            $video_link = "";
+                            if (!empty($data_value['derivatives']) && is_array($data_value['derivatives'])) {
+                                foreach ($data_value['derivatives'] as $derivative) {
+                                    if (isset($derivative['public_url']) && !empty($derivative['public_url'])) {
+                                        $video_link = $derivative['public_url'] . '@@' . $derivative['main_link'];
+                                        break; // take the first available public_url
+                                    } else {
+                                        $video_link = $derivative['s3_link'] . '@@' . $derivative['main_link'];
+                                    }
+
+                                }
+                            }
+                            //$video_link = $image_data['s3_link'] . '@@' . $data_value['derivatives'][0]['original_link'];
                             array_push($data_arr, $data_sku[0]);
                             $data_p = [
                                 "sku" => $data_sku[0],
@@ -1087,7 +1110,7 @@ class Psku extends \Magento\Backend\App\Action
                                 }
                             }*/
                         } elseif ($img['item_type'] == 'VIDEO') {
-                            $old_video_value[] = $img;
+                            $old_video_detail[] = $img;
                         }
                     }
                     $array_merge = array_merge($new_image_detail, $diff_image_detail);
@@ -1251,7 +1274,7 @@ class Psku extends \Magento\Backend\App\Action
                         }
                     }
                     foreach ($new_video_array as $vv => $video_value) {
-                        $item_url = explode("?", $video_value);
+                        $item_url = explode("@@", $video_value);
                         $thum_url = explode("@@", $video_value);
                         $media_video_explode = explode("/", $item_url[0]);
                         $find_video = strpos($video_value, "@@");

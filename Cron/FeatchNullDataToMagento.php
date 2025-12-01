@@ -475,7 +475,19 @@ class FeatchNullDataToMagento
                     array_push($data_val_arr, $data_p);
                 } else {
                     if ($data_value['type'] == 'video') {
-                        $video_link = $image_data['s3_link'] . '@@' . $data_value['derivatives'][0]['original_link'];
+                        $video_link = "";
+                        if (!empty($data_value['derivatives']) && is_array($data_value['derivatives'])) {
+                            foreach ($data_value['derivatives'] as $derivative) {
+                                if (isset($derivative['public_url']) && !empty($derivative['public_url'])) {
+                                    $video_link = $derivative['public_url'] . '@@' . $derivative['main_link'];
+                                    break; // take the first available public_url
+                                } else {
+                                    $video_link = $derivative['s3_link'] . '@@' . $derivative['main_link'];
+                                }
+
+                            }
+                        }
+                        //$video_link = $image_data['s3_link'] . '@@' . $data_value['derivatives'][0]['original_link'];
                         array_push($data_arr, $data_sku[0]);
                         $data_p = [
                             "sku" => $data_sku[0],
@@ -626,7 +638,7 @@ class FeatchNullDataToMagento
                                 $this->getInsertDataTable($data_image_data);
                             } elseif($find_video) {
 								$is_order = isset($isOrder[$vv]) ? $isOrder[$vv] : "";
-								$item_url = explode("?", $image_value);
+								$item_url = explode("@@", $image_value);
 								$thum_url = explode("@@", $image_value);
                                 $media_video_explode = explode("/", $item_url[0]);
             
@@ -642,7 +654,7 @@ class FeatchNullDataToMagento
                                     'sku' => $product_sku_key,
                                     'message' => $item_url[0],
                                     'data_type' => '3',
-                                    'media_id' => $media_video_explode[5],
+                                    'media_id' => $media_video_explode[$vv],
                                     'remove_for_magento' => '1',
                                     'added_on_cron_compactview' => '1',
                                     'lable' => 1

@@ -519,8 +519,20 @@ class UpdateAllSku
 					} else {
 						if ($data_value['type'] == 'video') {
 							/*$video_link = $image_data["image_link"] . '@@' . $image_data["webimage"];*/
-							$video_link = $image_data['s3_link'] . '@@' . $data_value['derivatives'][0]['original_link'];
-							array_push($data_arr, $data_sku[0]);
+							//$video_link = $image_data['s3_link'] . '@@' . $data_value['derivatives'][0]['original_link'];
+							$video_link = "";
+                            if (!empty($data_value['derivatives']) && is_array($data_value['derivatives'])) {
+                                foreach ($data_value['derivatives'] as $derivative) {
+                                    if (isset($derivative['public_url']) && !empty($derivative['public_url'])) {
+                                        $video_link = $derivative['public_url'] . '@@' . $derivative['main_link'];
+                                        break; // take the first available public_url
+                                    } else {
+                                        $video_link = $derivative['s3_link'] . '@@' . $derivative['main_link'];
+                                    }
+
+                                }
+                            }
+                            array_push($data_arr, $data_sku[0]);
 							$data_p = [
 								"sku" => $data_sku[0],
 								"url" => [$video_link. "\n"],
@@ -665,7 +677,19 @@ class UpdateAllSku
                     } else {
                         if ($data_value['type'] == 'video') {
                             /*$video_link = $image_data["image_link"] . '@@' . $image_data["webimage"];*/
-                            $video_link = $image_data['s3_link'] . '@@' . $data_value['derivatives'][0]['original_link'];
+                            $video_link = "";
+                            if (!empty($data_value['derivatives']) && is_array($data_value['derivatives'])) {
+                                foreach ($data_value['derivatives'] as $derivative) {
+                                    if (isset($derivative['public_url']) && !empty($derivative['public_url'])) {
+                                        $video_link = $derivative['public_url'] . '@@' . $derivative['main_link'];
+                                        break; // take the first available public_url
+                                    } else {
+                                        $video_link = $derivative['s3_link'] . '@@' . $derivative['main_link'];
+                                    }
+
+                                }
+                            }
+                            //$video_link = $image_data['s3_link'] . '@@' . $data_value['derivatives'][0]['original_link'];
                             array_push($data_arr, $data_sku[0]);
                             $data_p = [
                                 "sku" => $data_sku[0],
@@ -945,7 +969,7 @@ class UpdateAllSku
                     }
                     foreach ($new_image_array as $vv => $new_image_value) {
                         if (trim($new_image_value) != "" && $new_image_value != "no image") {
-                            $item_url = explode("?", $new_image_value);
+                            $item_url = explode("@@", $new_image_value);
                             $media_image_explode = explode("/", $item_url[0]);
                             $img_altText_val = "";
                             if (isset($new_alttext_array[$vv])) {
@@ -1268,7 +1292,7 @@ class UpdateAllSku
                         }
                     }
                     foreach ($new_video_array as $vv => $video_value) {
-                        $item_url = explode("?", $video_value);
+                        $item_url = explode("@@", $video_value);
                         $thum_url = explode("@@", $video_value);
                         $media_video_explode = explode("/", $item_url[0]);
                         $find_video = strpos($video_value, "@@");
@@ -1326,7 +1350,7 @@ class UpdateAllSku
                     foreach ($new_video_array as $vv => $video_value) {
                         $find_video = strpos($video_value, "@@");
                         if ($find_video) {
-                            $item_url = explode("?", $video_value);
+                            $item_url = explode("@@", $video_value);
                             $thum_url = explode("@@", $video_value);
                             $media_video_explode = explode("/", $item_url[0]);
 							$is_order = isset($isOrder[$vv]) ? $isOrder[$vv] : "";
