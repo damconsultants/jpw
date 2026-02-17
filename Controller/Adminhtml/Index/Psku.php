@@ -537,7 +537,7 @@ class Psku extends \Magento\Backend\App\Action
 								}
 							}
 							if (!empty($doc_link)) {
-								array_push($data_arr, $data_sku[0]);
+								array_push($doc_data_arr, $data_sku[0]);
 								$data_p = [
 									"sku" => $data_sku[0],
 									"url" => [$doc_link],
@@ -546,11 +546,12 @@ class Psku extends \Magento\Backend\App\Action
 									'bynder_media_id_new' => $new_bynder_mediaid_text,
 									'is_order' => $is_order
 								];
-								array_push($data_val_arr, $data_p);
+								array_push($doc_data, $data_p);
 							}
                         }
     
                     }
+                    
                 } elseif($select_attribute == 'all_attribute') {
 					$bynder_media_id = $data_value['id'];
                     $image_data = $data_value['thumbnails'];
@@ -712,7 +713,8 @@ class Psku extends \Magento\Backend\App\Action
 				}
             }
         }
-		if (count($data_arr) > 0) {
+        
+        if (count($data_arr) > 0) {
 			$this->getProcessItem($data_arr, $data_val_arr);
 		}
 		if(count($doc_data_arr) > 0) {
@@ -846,7 +848,6 @@ class Psku extends \Magento\Backend\App\Action
 					}
 				}
 				$new_value_array = json_encode($doc_detail, true);
-				
 				$this->productAction->updateAttributes(
 					[$product_ids],
 					['bynder_document' => $new_value_array],
@@ -857,7 +858,7 @@ class Psku extends \Magento\Backend\App\Action
 				if (is_array($item_old_value)) {
 					if (count($item_old_value) > 0) {
 						foreach ($item_old_value as $doc) {
-							if ($doc['item_type'] == 'DOCUMENT') {
+							if ($doc['item_type'] == 'DOCUMENT' || $doc['item_type'] == 'document') {
 								$all_item_url[] = $doc['item_url'];
 								$b_id[] = $doc['bynder_md_id'];
 							}

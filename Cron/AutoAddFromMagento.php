@@ -529,7 +529,7 @@ class AutoAddFromMagento
 						if (!empty($data_value['derivatives']) && is_array($data_value['derivatives'])) {
 							foreach ($data_value['derivatives'] as $derivative) {
 								if (isset($derivative['public_url']) && !empty($derivative['public_url'])) {
-									$doc_link = $derivative['public_url'] . '@@' . $doc_name . "\n";
+									$doc_link = $derivative['public_url'] . '@@@' . $doc_name . "\n";
 									break; // take the first available public_url
 								}
 							}
@@ -944,11 +944,11 @@ class AutoAddFromMagento
                     $new_doc_array = explode("\n", $img_json);
                     $doc_detail = [];
                     foreach ($new_doc_array as $vv => $doc_value) {
-						$find_doc = strpos($doc_value, "??");
+						$find_doc = strpos($doc_value, "@@@");
 						if ($find_doc) {
 							if(!empty($doc_value)){
-								$item_url = explode("??", $doc_value);
-								$doc_name = explode("??", $doc_value);
+								$item_url = explode("@@@", $doc_value);
+								$doc_name = explode("@@@", $doc_value);
 								$media_doc_explode = explode("/", $item_url[0]);
 								$is_order = isset($isOrder[$vv]) ? $isOrder[$vv] : "";
 								if(isset($doc_name[1]) && isset($bynder_media_ids[$vv])){

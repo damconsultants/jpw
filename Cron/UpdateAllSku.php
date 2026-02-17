@@ -551,13 +551,13 @@ class UpdateAllSku
 							if (!empty($data_value['derivatives']) && is_array($data_value['derivatives'])) {
 								foreach ($data_value['derivatives'] as $derivative) {
 									if (isset($derivative['public_url']) && !empty($derivative['public_url'])) {
-										$doc_link = $derivative['public_url'] . '@@' . $doc_name . "\n";
+										$doc_link = $derivative['public_url'] . '@@@' . $doc_name . "\n";
 										break; // take the first available public_url
 									}
 								}
 							}
 							if (!empty($doc_link)) {
-								array_push($data_arr, $data_sku[0]);
+								array_push($doc_data_arr, $data_sku[0]);
 								$data_p = [
 									"sku" => $data_sku[0],
 									"url" => [$doc_link],
@@ -566,7 +566,7 @@ class UpdateAllSku
 									'bynder_media_id_new' => $new_bynder_mediaid_text,
 									'is_order' => $is_order
 								];
-								array_push($data_val_arr, $data_p);
+								array_push($doc_data, $data_p);
 							}
 						}
 					}
@@ -847,7 +847,7 @@ class UpdateAllSku
 				$doc_detail = [];
 				foreach ($new_doc_array as $vv => $doc_value) {
 					//$item_url = explode("?", $doc_value);
-					$doc_name = explode("@@", $doc_value);
+					$doc_name = explode("@@@", $doc_value);
 					$media_doc_explode = explode("/", $doc_name[0]);
 					$is_order = isset($isOrder[$vv]) ? $isOrder[$vv] : "";
 					if(isset($doc_name[1]) && isset($bynder_media_id[$vv])){
@@ -892,7 +892,7 @@ class UpdateAllSku
 				foreach ($new_doc_array as $vv => $doc_value) {
 					if(!empty($doc_value)){
 						$item_url = explode("@@", $doc_value);
-						$doc_name = explode("@@", $doc_value);
+						$doc_name = explode("@@@", $doc_value);
 						$media_doc_explode = explode("/", $item_url[0]);
 						$is_order = isset($isOrder[$vv]) ? $isOrder[$vv] : "";
 						if(isset($doc_name[1]) && isset($bynder_media_id[$vv])){

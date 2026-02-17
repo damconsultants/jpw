@@ -507,7 +507,7 @@ class FeatchNullDataToMagento
 						if (!empty($data_value['derivatives']) && is_array($data_value['derivatives'])) {
 							foreach ($data_value['derivatives'] as $derivative) {
 								if (isset($derivative['public_url']) && !empty($derivative['public_url'])) {
-									$doc_link = $derivative['public_url'] . '@@' . $doc_name . "\n";
+									$doc_link = $derivative['public_url'] . '@@@' . $doc_name . "\n";
 									break; // take the first available public_url
 								}
 							}
@@ -654,7 +654,7 @@ class FeatchNullDataToMagento
                                     'sku' => $product_sku_key,
                                     'message' => $item_url[0],
                                     'data_type' => '3',
-                                    'media_id' => $media_video_explode[$vv],
+                                    'media_id' => $bynder_media_id[$vv],
                                     'remove_for_magento' => '1',
                                     'added_on_cron_compactview' => '1',
                                     'lable' => 1
@@ -741,11 +741,11 @@ class FeatchNullDataToMagento
                     $new_doc_array = explode("\n", $img_json);
                     $doc_detail = [];
                     foreach ($new_doc_array as $vv => $doc_values) {
-						$find_doc = strpos($doc_values, "??");
+						$find_doc = strpos($doc_values, "@@@");
 						if($find_doc) {
-							$item_url = explode("??", $doc_values);
-							$doc_name = explode("??", $doc_values);
-							$media_doc_explode = explode("/", $item_url[0]);
+							$item_url = explode("@@@", $doc_values);
+                            $doc_name = explode("@@@", $doc_values);
+                            $media_doc_explode = explode("/", $item_url[0]);
 							if(isset($doc_name[1]) && isset($bynder_media_id[$vv])){
 								$is_order = isset($isOrder[$vv]) ? $isOrder[$vv] : "";
 								$doc_detail[] = [
