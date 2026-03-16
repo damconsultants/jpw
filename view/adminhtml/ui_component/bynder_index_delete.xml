@@ -193,6 +193,7 @@
                         <item name="title" xsi:type="string" translate="true">Delete Data?</item>
                         <item name="message" xsi:type="string" translate="true">Are you sure you want to delete the selected Data?</item>
                     </item>
+                    <item name="aclResource" xsi:type="string">DamConsultants_JPW::cron_mass_delete</item>
                 </item>
             </argument>
             <settings>

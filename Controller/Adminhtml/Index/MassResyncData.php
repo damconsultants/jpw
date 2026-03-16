@@ -6,6 +6,7 @@ use Magento\Backend\App\Action\Context;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Ui\Component\MassAction\Filter;
 use DamConsultants\JPW\Model\ResourceModel\Collection\BynderSycDataCollectionFactory;
+use Magento\Framework\AuthorizationInterface;
 
 class MassResyncData extends Action
 {
@@ -37,6 +38,7 @@ class MassResyncData extends Action
      * @var $storeManagerInterface
      */
     protected $storeManagerInterface;
+    protected $_authorization;
     /**
      * Closed constructor.
      *
@@ -56,6 +58,7 @@ class MassResyncData extends Action
         \DamConsultants\JPW\Model\BynderSycDataFactory $bynderFactory,
         \Magento\Catalog\Model\ProductRepository $productRepository,
         \Magento\Catalog\Model\Product\Action $action,
+        AuthorizationInterface $authorization,
         \Magento\Framework\Api\SearchCriteriaBuilder $searchCriteriaBuilder,
         \Magento\Store\Model\StoreManagerInterface $storeManagerInterface
     ) {
@@ -64,6 +67,7 @@ class MassResyncData extends Action
         $this->bynderFactory = $bynderFactory;
         $this->_productRepository = $productRepository;
         $this->action = $action;
+        $this->_authorization = $authorization;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->storeManagerInterface = $storeManagerInterface;
         parent::__construct($context);
@@ -124,6 +128,6 @@ class MassResyncData extends Action
      */
     public function _isAllowed()
     {
-        return $this->_authorization->isAllowed('DamConsultants_JPW::resync');
+        return $this->_authorization->isAllowed('DamConsultants_JPW::mass_resync');
     }
 }

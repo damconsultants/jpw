@@ -6,6 +6,7 @@ use Magento\Backend\App\Action\Context;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Ui\Component\MassAction\Filter;
 use DamConsultants\JPW\Model\ResourceModel\Collection\BynderDeleteDataCollectionFactory;
+use Magento\Framework\AuthorizationInterface;
 
 class MassDeleteCronData extends Action
 {
@@ -24,6 +25,7 @@ class MassDeleteCronData extends Action
      *
      */
     protected $bynderFactory;
+    protected $_authorization;
     /**
      * Get Sku.
      * @param Context $context
@@ -35,11 +37,13 @@ class MassDeleteCronData extends Action
         Context $context,
         Filter $filter,
         BynderDeleteDataCollectionFactory $collectionFactory,
+        AuthorizationInterface $authorization,
         \DamConsultants\JPW\Model\BynderDeleteDataFactory $bynderFactory
     ) {
         $this->filter = $filter;
         $this->collectionFactory = $collectionFactory;
         $this->bynderFactory = $bynderFactory;
+        $this->_authorization = $authorization;
         parent::__construct($context);
     }
     /**
@@ -70,6 +74,6 @@ class MassDeleteCronData extends Action
      */
     public function _isAllowed()
     {
-        return $this->_authorization->isAllowed('DamConsultants_JPW::delete');
+        return $this->_authorization->isAllowed('DamConsultants_JPW::cron_mass_delete');
     }
 }

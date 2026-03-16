@@ -6,6 +6,7 @@ use Magento\Backend\App\Action\Context;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Ui\Component\MassAction\Filter;
 use DamConsultants\JPW\Model\ResourceModel\Collection\BynderConfigSyncDataCollectionFactory;
+use Magento\Framework\AuthorizationInterface;
 
 class MassDeleteSyncData extends Action
 {
@@ -22,6 +23,7 @@ class MassDeleteSyncData extends Action
      *
      */
     protected $bynderFactory;
+    protected $authorization;
     /**
      * Mass Delete
      *
@@ -34,11 +36,13 @@ class MassDeleteSyncData extends Action
         Context $context,
         Filter $filter,
         BynderConfigSyncDataCollectionFactory $collectionFactory,
+        AuthorizationInterface $authorization,
         \DamConsultants\JPW\Model\BynderConfigSyncDataFactory $bynderFactory
     ) {
         $this->filter = $filter;
         $this->collectionFactory = $collectionFactory;
         $this->bynderFactory = $bynderFactory;
+        $this->authorization = $authorization;
         parent::__construct($context);
     }
     /**
@@ -65,6 +69,6 @@ class MassDeleteSyncData extends Action
      */
     public function _isAllowed()
     {
-        return $this->_authorization->isAllowed('DamConsultants_JPW::delete');
+        return $this->_authorization->isAllowed('DamConsultants_JPW::massdelete');
     }
 }

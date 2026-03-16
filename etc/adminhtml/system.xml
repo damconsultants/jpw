@@ -41,7 +41,7 @@
         <section id="byndersyncdata" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Sync. JPW Data</label>
             <tab>bynder_tab</tab>
-            <resource>DamConsultants_JPW::config</resource>
+            <resource>DamConsultants_JPW::sync</resource>
             <group id="bynder_sync_data" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Sync. JPW Data</label>
                 <field id="select" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -90,7 +90,7 @@
         <section id="cronimageconfig" translate="label" type="text" sortOrder="90" showInDefault="1" showInWebsite="1" showInStore="1">
             <label>Cron Config</label>
             <tab>bynder_tab</tab>
-            <resource>DamConsultants_JPW::config</resource>
+            <resource>DamConsultants_JPW::cron</resource>
             <!--<group id="set_limit_product_sku" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
                 <label>Set Limit for Product SKU sync. from Cron</label>
                 <field id="product_sku_limt" translate="label" type="text" sortOrder="2" showInDefault="2" showInWebsite="1" showInStore="1">

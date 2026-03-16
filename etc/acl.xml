@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+   <acl>
+     <resources>
+        <resource id="Magento_Backend::admin">
+            <resource id="Magento_Backend::stores">
+                <resource id="Magento_Backend::stores_settings">
+                    <resource id="Magento_Config::config">
+                        <resource id="DamConsultants_JPW::config" title="JPW Credential" sortOrder="192012" />
+                        <resource id="DamConsultants_JPW::sync" title="JPW Manual sync" sortOrder="192013" />
+						<resource id="DamConsultants_JPW::image" title="JPW Image Configuration" sortOrder="192013" />
+                        <resource id="DamConsultants_JPW::cron" title="JPW Cron" sortOrder="192014" />
+                    </resource>
+                </resource>
+            </resource>
+            <resource id="DamConsultants_JPW::menu" title="JPW Menu">
+                <resource id="DamConsultants_JPW::menu_item5" title="JPW Submenu">
+                    <resource id="DamConsultants_JPW::menu_item1" title="JPW Meta Property" sortOrder="192005" />
+                </resource>
+				<resource id="DamConsultants_JPW::menu_item6" title="JPW Cron Log">
+                    <resource id="DamConsultants_JPW::menu_item" title="JPW Cron Action Log" sortOrder="192006">
+						<resource id="DamConsultants_JPW::resync" title="JPW ReSync Link" sortOrder="192006"/>
+						<resource id="DamConsultants_JPW::cron_delete" title="JPW Delete Link" sortOrder="192006"/>
+						<resource id="DamConsultants_JPW::mass_resync" title="JPW Mass Re-Sync Data" sortOrder="192006"/>
+						<resource id="DamConsultants_JPW::cron_massdelete" title="JPW Mass Delete Data" sortOrder="192006"/>
+					</resource>
+					<resource id="DamConsultants_JPW::menu_item3" title="JPW Replace Cron Action Log" sortOrder="192007">
+						<resource id="DamConsultants_JPW::autocron_delete" title="JPW Replace Cron Delete Link" sortOrder="192007"/>
+						<resource id="DamConsultants_JPW::autocron_massdelete" title="JPW Replace Cron Mass Delete Link" sortOrder="192007"/>
+					</resource>
+					<resource id="DamConsultants_JPW::menu_item4" title="JPW Delete Cron Action Log" sortOrder="192008">
+						<resource id="DamConsultants_JPW::cron_mass_delete" title="JPW Delete Cron Mass Delete Link" sortOrder="192008"/>
+					</resource>
+                </resource>
+				<resource id="DamConsultants_JPW::menu_item7" title="JPW Manual sync Log">
+                    <resource id="DamConsultants_JPW::menu_item2" title="JPW Synchronization Log" sortOrder="192009">
+						<resource id="DamConsultants_JPW::sync_delete" title="JPW Manual Sync Delete Link" sortOrder="192009"/>
+						<resource id="DamConsultants_JPW::massdelete" title="JPW Manual Sync Mass Delete Link" sortOrder="192009"/>
+					</resource>
+					<resource id="DamConsultants_JPW::menu_item9" title="JPW Manual Sku Log" sortOrder="192009">
+						<resource id="DamConsultants_JPW::manual_sku_delete" title="JPW Manual Sku Delete Link" sortOrder="192009"/>
+						<resource id="DamConsultants_JPW::manual_cron_massdelete" title="JPW Manual Sku Mass Delete Link" sortOrder="192009"/>
+					</resource>
+                </resource>
+				<resource id="DamConsultants_JPW::menu_item8" title="JPW Configuration Settings">
+                    <resource id="DamConsultants_JPW::settings" title="JPW Configuration Settings" sortOrder="192010" />
+                </resource>
+            </resource>
+        </resource>
+     </resources>
+   </acl>
+</config>

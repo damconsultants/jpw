@@ -49,6 +49,7 @@
                         <item name="title" xsi:type="string" translate="true">Delete Data?</item>
                         <item name="message" xsi:type="string" translate="true">Are you sure you want to delete the selected Data?</item>
                     </item>
+                    <item name="aclResource" xsi:type="string">DamConsultants_JPW::cron_delete</item>
                 </item>
                 </argument>
             </action>
@@ -62,6 +63,7 @@
                         <item name="title" xsi:type="string" translate="true">Re-Sync Data?</item>
                         <item name="message" xsi:type="string" translate="true">Are you sure you want to Re-Sync the selected Data?</item>
                     </item>
+                    <item name="aclResource" xsi:type="string">DamConsultants_JPW::mass_resync</item>
                 </item>
                 </argument>
             </action>

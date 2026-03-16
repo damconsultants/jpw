@@ -6,6 +6,7 @@ use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
 use DamConsultants\JPW\Model\ResourceModel\Collection\BynderSycDataCollectionFactory;
+use Magento\Framework\AuthorizationInterface;
 
 class ReSyncData extends \Magento\Ui\Component\Listing\Columns\Column
 {
@@ -29,6 +30,7 @@ class ReSyncData extends \Magento\Ui\Component\Listing\Columns\Column
      * @var bynderSycDataCollectionFactory
      */
     protected $bynderSycDataCollectionFactory;
+    protected $authorization;
     /**
      * Closed constructor.
      *
@@ -49,6 +51,7 @@ class ReSyncData extends \Magento\Ui\Component\Listing\Columns\Column
         \DamConsultants\JPW\Model\BynderSycDataFactory $BynderSycDataFactory,
         BynderSycDataCollectionFactory $bynderSycDataCollectionFactory,
         \Magento\Framework\App\ResourceConnection $resource,
+        AuthorizationInterface $authorization,
         UrlInterface $urlBuilder,
         array $components = [],
         array $data = []
@@ -57,6 +60,7 @@ class ReSyncData extends \Magento\Ui\Component\Listing\Columns\Column
         $this->_resource = $resource;
         $this->bynderSycDataFactory = $BynderSycDataFactory;
         $this->_productRepository = $productRepository;
+        $this->authorization = $authorization;
         $this->bynderSycDataCollectionFactory = $bynderSycDataCollectionFactory;
         parent::__construct($context, $uiComponentFactory, $components, $data);
     }
@@ -74,7 +78,7 @@ class ReSyncData extends \Magento\Ui\Component\Listing\Columns\Column
                 try {
                     $_product = $this->_productRepository->get($sku);
                     $product_bynder_cron_val = $_product->getBynderCronSync();
-                    if (isset($item['id'])) {
+                    if (isset($item['id']) && $this->authorization->isAllowed('DamConsultants_JPW::resync')) {
                         $viewUrlPath = $this->getData('config/viewUrlPath');
                         $urlEntityParamName = $this->getData('config/urlEntityParamName');
                         if ($item['media_id'] == null && $product_bynder_cron_val != null) {

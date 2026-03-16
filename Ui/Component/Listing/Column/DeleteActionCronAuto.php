@@ -4,6 +4,7 @@ namespace DamConsultants\JPW\Ui\Component\Listing\Column;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
+use Magento\Framework\AuthorizationInterface;
 
 class DeleteActionCronAuto extends \Magento\Ui\Component\Listing\Columns\Column
 {
@@ -11,6 +12,7 @@ class DeleteActionCronAuto extends \Magento\Ui\Component\Listing\Columns\Column
      * @var urlBuilder
      */
     public $urlBuilder;
+    protected $authorization;
     /**
      * Closed constructor.
      *
@@ -24,10 +26,12 @@ class DeleteActionCronAuto extends \Magento\Ui\Component\Listing\Columns\Column
         ContextInterface $context,
         UiComponentFactory $uiComponentFactory,
         UrlInterface $urlBuilder,
+        AuthorizationInterface $authorization,
         array $components = [],
         array $data = []
     ) {
         $this->urlBuilder = $urlBuilder;
+        $this->authorization = $authorization;
         parent::__construct($context, $uiComponentFactory, $components, $data);
     }
     /**
@@ -40,7 +44,7 @@ class DeleteActionCronAuto extends \Magento\Ui\Component\Listing\Columns\Column
     {
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as &$item) {
-                if (isset($item['id'])) {
+                if (isset($item['id']) && $this->authorization->isAllowed('DamConsultants_JPW::autocron_delete')) {
                     $viewUrlPath = $this->getData('config/viewUrlPath');
                     $urlEntityParamName = $this->getData('config/urlEntityParamName');
                     $item[$this->getData('name')] = [
